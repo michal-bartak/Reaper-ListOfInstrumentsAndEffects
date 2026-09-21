@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="List of Instruments and Effects" commit="76d5e13d9ea44e1c6f92965d0b575da36d68ff2a">
+<index version="1" name="List of Instruments and Effects" commit="cfd9f2ff312f83829d76dae7249adbd2b73b5e40">
   <category name="Various">
     <reapack name="MXM_List of Instruments and Effects.lua" type="script" desc="List of Instruments and Effects">
       <metadata>
@@ -19,11 +19,12 @@
 {\pard \ql \f0 \fs24 \sa0 \li360 \fi-360\ls1\ilvl0\tx360 {\listtext\tab \bullet \tab} {\b BB plain} -- some BBCode formatting, such as bold\par}
 {\pard \ql \f0 \fs24 \sa0 \li360 \fi-360\ls1\ilvl0\tx360 {\listtext\tab \bullet \tab} {\b BB code} -- wrapped in {\f1 \fs24 [CODE]} tags to force a fixed-width font\sa180\par}
 {\pard \ql \f0 \fs24 \sa180 \li0 \fi0 The report follows the project: edit it, or switch to another project tab, and the window catches up by itself. Normally the window shows plain text whichever export format you copy; tick {\f1 \fs24 debug} to make it show exactly what goes to the clipboard.\par}
+{\pard \ql \f0 \fs24 \sa180 \li0 \fi0 The \u9432 ? button shows the version, the licence and a link to the documentation.\par}
 {\pard \ql \f0 \fs24 \sa180 \li0 \fi0 Requires {\b ReaImGui 0.10 or newer}, available on ReaPack. Nothing else -- neither Lokasenna's GUI library nor SWS is needed any more.\par}
 {\pard \ql \f0 \fs24 \sa180 \li0 \fi0 Written and tested in REAPER 7.x; it may work in earlier versions. GPL v3.\par}
 }
 ]]></description>
-        <link rel="website" href="https://github.com/michal-bartak/ListOfInstrumentsAndEffects">GitHub</link>
+        <link rel="website" href="https://michal-bartak.github.io/ListOfInstrumentsAndEffects/">Documentation</link>
         <link rel="screenshot">https://raw.githubusercontent.com/michal-bartak/ListOfInstrumentsAndEffects/main/images/List_of_Instruments_and_Effects.png</link>
       </metadata>
       <version name="2.0" author="Michal MaXyM Bartak" time="2026-09-18T12:49:50Z">
@@ -64,16 +65,21 @@ Record input FX are counted, in a new **Input FX** section. Only the master
 track's input chain -- the monitoring chain -- was read before, so input FX
 on ordinary tracks were invisible.
 
+The window has an ⓘ button: the version you are running, the author, the
+licence, and links to the documentation and the source.
+
 The report no longer goes stale between clicks: it refreshes itself when
 the project changes or you switch project tab. It also follows the project
 you are actually looking at, where before the track list was read from
 whichever project was open when the script started.]]></changelog>
-        <source main="main" file="../MXM_ListOfInstrumentsAndEffects/MXM_List of Instruments and Effects.lua">https://github.com/michal-bartak/ListOfInstrumentsAndEffects/raw/76d5e13d9ea44e1c6f92965d0b575da36d68ff2a/Reaper/Scripts/MXM_ListOfInstrumentsAndEffects/MXM_List%20of%20Instruments%20and%20Effects.lua</source>
-        <source file="../MXM_ListOfInstrumentsAndEffects/lib/report.lua">https://github.com/michal-bartak/ListOfInstrumentsAndEffects/raw/76d5e13d9ea44e1c6f92965d0b575da36d68ff2a/Reaper/Scripts/MXM_ListOfInstrumentsAndEffects/lib/report.lua</source>
-        <source file="../MXM_ListOfInstrumentsAndEffects/lib/scan.lua">https://github.com/michal-bartak/ListOfInstrumentsAndEffects/raw/76d5e13d9ea44e1c6f92965d0b575da36d68ff2a/Reaper/Scripts/MXM_ListOfInstrumentsAndEffects/lib/scan.lua</source>
-        <source type="data" file="toolbar_icons/mxm_toolbar_list_of_instruments_and_effects.png">https://github.com/michal-bartak/ListOfInstrumentsAndEffects/raw/76d5e13d9ea44e1c6f92965d0b575da36d68ff2a/Reaper/Data/toolbar_icons/mxm_toolbar_list_of_instruments_and_effects.png</source>
-        <source type="data" file="toolbar_icons/150/mxm_toolbar_list_of_instruments_and_effects.png">https://github.com/michal-bartak/ListOfInstrumentsAndEffects/raw/76d5e13d9ea44e1c6f92965d0b575da36d68ff2a/Reaper/Data/toolbar_icons/150/mxm_toolbar_list_of_instruments_and_effects.png</source>
-        <source type="data" file="toolbar_icons/200/mxm_toolbar_list_of_instruments_and_effects.png">https://github.com/michal-bartak/ListOfInstrumentsAndEffects/raw/76d5e13d9ea44e1c6f92965d0b575da36d68ff2a/Reaper/Data/toolbar_icons/200/mxm_toolbar_list_of_instruments_and_effects.png</source>
+        <source main="main" file="../MXM_ListOfInstrumentsAndEffects/MXM_List of Instruments and Effects.lua">https://github.com/michal-bartak/ListOfInstrumentsAndEffects/raw/cfd9f2ff312f83829d76dae7249adbd2b73b5e40/Reaper/Scripts/MXM_ListOfInstrumentsAndEffects/MXM_List%20of%20Instruments%20and%20Effects.lua</source>
+        <source file="../MXM_ListOfInstrumentsAndEffects/lib/about.lua">https://github.com/michal-bartak/ListOfInstrumentsAndEffects/raw/cfd9f2ff312f83829d76dae7249adbd2b73b5e40/Reaper/Scripts/MXM_ListOfInstrumentsAndEffects/lib/about.lua</source>
+        <source file="../MXM_ListOfInstrumentsAndEffects/lib/report.lua">https://github.com/michal-bartak/ListOfInstrumentsAndEffects/raw/cfd9f2ff312f83829d76dae7249adbd2b73b5e40/Reaper/Scripts/MXM_ListOfInstrumentsAndEffects/lib/report.lua</source>
+        <source file="../MXM_ListOfInstrumentsAndEffects/lib/scan.lua">https://github.com/michal-bartak/ListOfInstrumentsAndEffects/raw/cfd9f2ff312f83829d76dae7249adbd2b73b5e40/Reaper/Scripts/MXM_ListOfInstrumentsAndEffects/lib/scan.lua</source>
+        <source file="../MXM_ListOfInstrumentsAndEffects/lib/theme.lua">https://github.com/michal-bartak/ListOfInstrumentsAndEffects/raw/cfd9f2ff312f83829d76dae7249adbd2b73b5e40/Reaper/Scripts/MXM_ListOfInstrumentsAndEffects/lib/theme.lua</source>
+        <source type="data" file="toolbar_icons/mxm_toolbar_list_of_instruments_and_effects.png">https://github.com/michal-bartak/ListOfInstrumentsAndEffects/raw/cfd9f2ff312f83829d76dae7249adbd2b73b5e40/Reaper/Data/toolbar_icons/mxm_toolbar_list_of_instruments_and_effects.png</source>
+        <source type="data" file="toolbar_icons/150/mxm_toolbar_list_of_instruments_and_effects.png">https://github.com/michal-bartak/ListOfInstrumentsAndEffects/raw/cfd9f2ff312f83829d76dae7249adbd2b73b5e40/Reaper/Data/toolbar_icons/150/mxm_toolbar_list_of_instruments_and_effects.png</source>
+        <source type="data" file="toolbar_icons/200/mxm_toolbar_list_of_instruments_and_effects.png">https://github.com/michal-bartak/ListOfInstrumentsAndEffects/raw/cfd9f2ff312f83829d76dae7249adbd2b73b5e40/Reaper/Data/toolbar_icons/200/mxm_toolbar_list_of_instruments_and_effects.png</source>
       </version>
     </reapack>
   </category>
