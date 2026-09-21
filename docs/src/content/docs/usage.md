@@ -30,6 +30,9 @@ The ⓘ button at the right of the button row opens a dialog. It shows the
 version you are running, the author, the licence, and links to this site and
 the repository.
 
+The window behind it dims while the dialog is open. Close the dialog with its
+Close button, with Escape, or by clicking outside it.
+
 ## Refreshing
 
 The report refreshes itself when you edit the project or switch project tab.

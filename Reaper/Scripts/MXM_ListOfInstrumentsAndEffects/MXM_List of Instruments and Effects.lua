@@ -49,7 +49,7 @@ local MONO = ImGui.CreateFont('monospace')    -- the reports are column-aligned
 ImGui.Attach(ctx, SANS)
 ImGui.Attach(ctx, MONO)
 
-theme.init(ImGui, ctx)
+theme.init(ImGui, ctx, SANS)
 
 local BUTTONS = {
   { 'Plain Text', 'plaintext' },
@@ -60,10 +60,14 @@ local BUTTONS = {
 
 local ABOUT = 'About##dialog'
 
+-- Where the main window is, taken while inside its own Begin/End, for the
+-- About dialog to centre on afterwards -- by then GetWindowPos has moved on.
+local main_x, main_y, main_w, main_h = 0, 0, 0, 0
+
 local st = {
   fmt     = 'plaintext',  -- the format the last Copy button chose
   debug   = false,
-  about   = false,        -- set by the button, cleared once the popup is open
+  about   = false,        -- is the About dialog up?
   buckets = nil,
   copy    = '',           -- what a Copy button would put on the clipboard
   preview = '',           -- what the window shows
@@ -135,33 +139,66 @@ local function about_body(FS)
   ImGui.Spacing(ctx)
   local bw = FS * 8
   theme.center(bw)
-  if theme.button('Close##about', bw) then ImGui.CloseCurrentPopup(ctx) end
+  if theme.button('Close##about', bw) then st.about = false end
 end
 
--- A modal popup rather than a window of its own: ImGui closes it on Escape and
--- keeps it centred over the parent for free.
---
--- EndPopup is guaranteed, for the same reason PopFont is in preview(): a popup
--- left open by a failed frame corrupts the stack for every frame after it.
+--[[ The About dialog.
+
+  Not a MODAL. ImGui paints Col_ModalWindowDimBg during Render(), after every
+  PushStyleColor has been popped, so it always takes the style default -- which
+  in the dark style is near-white, and the window appeared to BRIGHTEN. The dim
+  is drawn by hand instead, in theme.push_content_dim.
+
+  Not a POPUP either, though these flags are chosen to look like one. ImGui owns
+  a popup's visibility and closes it on losing focus, so the dialog vanished on
+  an alt-tab.
+
+  What a popup gave away free and this has to ask for:
+    * TopMost, or the dimmed main window could be raised ABOVE the dialog.
+    * theme.push_content_dim's BeginDisabled, or the faded window behind would
+      still be clickable.
+    * Escape, and dismissal by a click outside -- both below.
+]]
 local function about_dialog(FS)
-  if st.about then
-    ImGui.OpenPopup(ctx, ABOUT)
+  if not st.about then return end
+
+  ImGui.SetNextWindowPos(ctx, main_x + main_w * 0.5, main_y + main_h * 0.5,
+                         ImGui.Cond_Always, 0.5, 0.5)
+  ImGui.SetNextWindowSize(ctx, FS * 28, 0, ImGui.Cond_Always)
+
+  ImGui.PushStyleVar(ctx, ImGui.StyleVar_WindowPadding,
+                     FS * theme.MODAL_PAD, FS * theme.MODAL_PAD)
+  local visible = ImGui.Begin(ctx, ABOUT, nil,
+                              ImGui.WindowFlags_NoTitleBar
+                              | ImGui.WindowFlags_NoResize
+                              | ImGui.WindowFlags_NoMove
+                              | ImGui.WindowFlags_NoCollapse
+                              | ImGui.WindowFlags_NoDocking
+                              | ImGui.WindowFlags_NoSavedSettings
+                              | ImGui.WindowFlags_TopMost)
+  ImGui.PopStyleVar(ctx)
+  if not visible then return end
+
+  local inside = ImGui.IsWindowHovered(ctx, ImGui.HoveredFlags_RootAndChildWindows)
+
+  -- End is guaranteed, for the same reason PopFont is in preview(): a window
+  -- left open by a failed frame corrupts the stack for every frame after it.
+  local ok, err = pcall(about_body, FS)
+
+  if ImGui.IsKeyPressed(ctx, ImGui.Key_Escape) then st.about = false end
+  if ImGui.IsMouseClicked(ctx, 0) and not inside
+     and ImGui.IsWindowFocused(ctx, ImGui.FocusedFlags_AnyWindow) then
     st.about = false
   end
 
-  ImGui.SetNextWindowSize(ctx, FS * 28, 0, ImGui.Cond_Always)
-  ImGui.PushStyleVar(ctx, ImGui.StyleVar_WindowPadding,
-                     FS * theme.MODAL_PAD, FS * theme.MODAL_PAD)
-  local open = ImGui.BeginPopupModal(ctx, ABOUT, nil, ImGui.WindowFlags_NoResize)
-  ImGui.PopStyleVar(ctx)
-  if not open then return end
-
-  local ok, err = pcall(about_body, FS)
-  ImGui.EndPopup(ctx)
+  ImGui.End(ctx)
   if not ok then error(err, 0) end
 end
 
 local function draw(FS)
+  main_x, main_y = ImGui.GetWindowPos(ctx)
+  main_w, main_h = ImGui.GetWindowSize(ctx)
+
   theme.section('Copy to clipboard')
 
   for i, b in ipairs(BUTTONS) do
@@ -188,8 +225,6 @@ local function draw(FS)
   if theme.info_button('about') then st.about = true end
   if ImGui.IsItemHovered(ctx) then ImGui.SetTooltip(ctx, 'About') end
 
-  about_dialog(FS)
-
   ImGui.Spacing(ctx)
   preview()
 end
@@ -212,11 +247,29 @@ local function frame()
   local visible, open = ImGui.Begin(ctx, 'List of Instruments and Effects', true)
 
   if visible then
+    -- The window's content fades, and stops taking clicks, while the dialog is
+    -- up. Pushed around the pcall, not inside draw(), so a failed frame cannot
+    -- leave BeginDisabled on the stack.
+    local dimmed = st.about
+    if dimmed then theme.push_content_dim() end
+
     local okdraw, err = pcall(draw, FS)
+
+    if dimmed then theme.pop_content_dim() end
     if not okdraw then
       ImGui.TextColored(ctx, 0xC2413BFF, 'Drawing error: ' .. tostring(err))
     end
     ImGui.End(ctx)        -- ONLY when Begin returned true
+  end
+
+  -- The dialog is a window of its own, so it is drawn AFTER the main window has
+  -- ended -- outside the dim, at full opacity, and still inside the theme and
+  -- font pushes, so it is styled and sized like everything else.
+  local okd, derr = pcall(about_dialog, FS)
+  if not okd then
+    reaper.ShowConsoleMsg('List of Instruments and Effects: About dialog error: ' ..
+                          tostring(derr) .. '\n')
+    st.about = false      -- or it throws again on every frame
   end
 
   theme.pop()             -- always, and before PopFont
