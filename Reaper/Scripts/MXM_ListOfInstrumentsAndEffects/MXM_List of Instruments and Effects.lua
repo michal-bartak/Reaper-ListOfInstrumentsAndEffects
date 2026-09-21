@@ -43,6 +43,9 @@ local theme  = require 'theme'
 
 local FONT_SIZE = 12
 
+local MIN_W, MIN_H = 420, 120   -- the window will not go smaller than this
+local NO_MAX = 1e6              -- and has no upper bound worth naming
+
 local ctx  = ImGui.CreateContext('List of Instruments and Effects')
 local SANS = ImGui.CreateFont('sans-serif')   -- 0.10: no size here
 local MONO = ImGui.CreateFont('monospace')    -- the reports are column-aligned
@@ -52,10 +55,10 @@ ImGui.Attach(ctx, MONO)
 theme.init(ImGui, ctx)
 
 local BUTTONS = {
-  { 'Plain Text', 'plaintext' },
-  { 'Markdown',   'markdown'  },
-  { 'BB Plain',   'bbplain'   },
-  { 'BB Code',    'bbcode'    },
+  { 'Plain Text', 'plaintext', 'Click to copy to clipboard as plain text' },
+  { 'Markdown',   'markdown',  'Click to copy to clipboard as markdown' },
+  { 'BB Plain',   'bbplain',   'Click to copy to clipboard as BBCode' },
+  { 'BB Code',    'bbcode',    'Click to copy to clipboard as BBCode in a [CODE] block' },
 }
 
 local ABOUT = 'About##dialog'
@@ -108,8 +111,10 @@ end
 -- again by the next one, and the leak would compound.
 local function preview()
   ImGui.PushFont(ctx, MONO, FONT_SIZE)
+  theme.push_panel_bg()
   local ok, err = pcall(ImGui.InputTextMultiline, ctx, '##preview', st.preview,
                         -1, -1, ImGui.InputTextFlags_ReadOnly)
+  theme.pop_panel_bg()
   ImGui.PopFont(ctx)
   if not ok then error(err, 0) end
 end
@@ -199,8 +204,6 @@ local function draw(FS)
   main_x, main_y = ImGui.GetWindowPos(ctx)
   main_w, main_h = ImGui.GetWindowSize(ctx)
 
-  theme.section('Copy to clipboard')
-
   for i, b in ipairs(BUTTONS) do
     if i > 1 then ImGui.SameLine(ctx) end
     if theme.button(b[1], FS * 5.5) then
@@ -208,6 +211,7 @@ local function draw(FS)
       rescan()
       ImGui.SetClipboardText(ctx, st.copy)
     end
+    ImGui.SetItemTooltip(ctx, b[3])
   end
 
   ImGui.SameLine(ctx)
@@ -223,7 +227,7 @@ local function draw(FS)
   ImGui.SetCursorPosX(ctx, ImGui.GetCursorPosX(ctx) +
                            ImGui.GetContentRegionAvail(ctx) - sz)
   if theme.info_button('about') then st.about = true end
-  if ImGui.IsItemHovered(ctx) then ImGui.SetTooltip(ctx, 'About') end
+  ImGui.SetItemTooltip(ctx, 'About')
 
   ImGui.Spacing(ctx)
   preview()
@@ -244,6 +248,10 @@ local function frame()
   poll_project()
 
   ImGui.SetNextWindowSize(ctx, FS * 46, FS * 34, ImGui.Cond_FirstUseEver)
+  -- Absolute, not a multiple of the font: below this the button row wraps and
+  -- the preview has no room left to be a preview. NO_MAX is a stand-in for
+  -- FLT_MAX -- larger than any display, and a real number, which inf is not.
+  ImGui.SetNextWindowSizeConstraints(ctx, MIN_W, MIN_H, NO_MAX, NO_MAX)
   local visible, open = ImGui.Begin(ctx, 'List of Instruments and Effects', true)
 
   if visible then

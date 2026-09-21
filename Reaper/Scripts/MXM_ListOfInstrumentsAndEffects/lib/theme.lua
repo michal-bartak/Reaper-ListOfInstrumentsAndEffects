@@ -137,6 +137,25 @@ function M.pop_content_dim()
   ImGui.PopStyleVar(ctx, 2)
 end
 
+--- Make a framed widget read as a panel rather than a slab.
+---
+--- AutoColor sets no background colour anywhere, and neither does this. Its
+--- large surfaces are BeginChild panels, which draw on Col_ChildBg -- fully
+--- transparent in the dark style, so the window shows through and a border
+--- marks the edge. A text frame draws on Col_FrameBg instead, which is not
+--- transparent, which is why the preview looked more solid than anything in
+--- AutoColor. Borrowing the child colour, and the border a panel would have,
+--- is what makes them match.
+function M.push_panel_bg()
+  ImGui.PushStyleColor(ctx, ImGui.Col_FrameBg, ImGui.GetStyleColor(ctx, ImGui.Col_ChildBg))
+  ImGui.PushStyleVar(ctx, ImGui.StyleVar_FrameBorderSize, 1)
+end
+
+function M.pop_panel_bg()
+  ImGui.PopStyleVar(ctx)
+  ImGui.PopStyleColor(ctx)
+end
+
 --- The colour ImGui would use right now, style stack included.
 local function live(idx)
   return (ImGui.GetColor and ImGui.GetColor(ctx, idx))

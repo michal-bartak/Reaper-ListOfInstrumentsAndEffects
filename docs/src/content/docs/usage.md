@@ -16,8 +16,9 @@ Four buttons copy the report to the clipboard:
 | BB Plain | BBCode, with bold headings |
 | BB Code | Plain text wrapped in `[CODE]` tags |
 
-See [Export formats](/ListOfInstrumentsAndEffects/formats/) for what each one
-looks like.
+Hover a button to see what it copies. See
+[Export formats](/ListOfInstrumentsAndEffects/formats/) for what each one looks
+like.
 
 ## Debug
 

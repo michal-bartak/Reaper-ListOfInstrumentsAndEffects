@@ -34,7 +34,7 @@ renaming orphans every existing install.
 run anywhere:
 
 ```bash
-./tests/run.sh
+make test
 ```
 
 `tests/mockreaper.lua` stands in for the ReaScript API. REAPER ships Lua 5.4.
@@ -45,7 +45,7 @@ run anywhere:
 Edit `icon/icon.svg`, then:
 
 ```bash
-npm install && npm run icon
+make icon
 ```
 
 This renders the README mark, the toolbar strips and the favicons. Commit what
@@ -54,11 +54,12 @@ changes.
 ## This site
 
 ```bash
-cd docs
-npm install
-npm run dev      # http://localhost:4321/ListOfInstrumentsAndEffects/
-npm run build    # static site into dist/
+make docs        # build, then serve it exactly as published
+make docs-dev    # live-reload server, for writing
+make docs-build  # static build into docs/dist/
 ```
+
+`make` on its own lists every target.
 
 GitHub Actions builds and deploys it on every push to `main` that touches
 `docs/`.
@@ -66,6 +67,8 @@ GitHub Actions builds and deploys it on every push to `main` that touches
 ## Releasing
 
 1. Bump `@version` and write `@changelog` in `Various/MXM_List of Instruments and Effects.lua`.
+   The manifest has to change in the same commit as the payload: `index.xml`
+   pins a version's downloads to the commit that declares it.
 2. Update `VERSION` in `lib/about.lua`. `tests/test_about.lua` fails if the two drift.
 3. Run `reapack-index` and commit `index.xml` on its own.
 4. Tag the index commit.
