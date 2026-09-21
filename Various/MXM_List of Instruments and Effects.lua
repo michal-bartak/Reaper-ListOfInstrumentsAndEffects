@@ -64,7 +64,9 @@
 --   on ordinary tracks were invisible.
 --
 --   The window has an ⓘ button: the version you are running, the author, the
---   licence, and links to the documentation and the source.
+--   licence, and links to the documentation and the source. The window behind
+--   dims while the dialog is open. Close it with its Close button, with Escape,
+--   or by clicking outside it.
 --
 --   The report no longer goes stale between clicks: it refreshes itself when
 --   the project changes or you switch project tab. It also follows the project
