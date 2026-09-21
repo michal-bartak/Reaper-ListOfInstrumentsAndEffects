@@ -34,7 +34,22 @@ M.SECTION_SCALE  = 1.07   -- x font size, for section headings
 M.SECTION_CASE   = 'upper'-- 'upper' (LIKE THIS) | 'title' (Like This) | 'none'
 M.SECTION_ALPHA  = 0.75   -- headings sit back a little from body text
 M.MODAL_PAD      = 1.20   -- x font size; padding inside a modal dialog
-M.INFO_SCALE     = 1.25   -- x font size; the circled "i" glyph, which is small
+-- The info icon is DRAWN, not typed. Centring a glyph centres its ADVANCE box,
+-- and the ink sits off-centre inside that box by the glyph's side bearings:
+-- measured off a screenshot at 2x, the circled "i" landed 2 device px left and
+-- 1.5 up of the button's centre. ImGui exposes no per-glyph metrics to correct
+-- for, and U+24D8 is missing from plenty of system fonts besides. Geometry has
+-- neither problem, and it stays centred at any size.
+--
+-- Every proportion is a fraction of the circle's radius, which is itself a
+-- fraction of the button, so the icon holds its shape as the font size changes.
+M.INFO_RADIUS    = 0.34   -- x the button side
+M.INFO_THICKNESS = 0.055  -- x the button side
+M.INFO_DOT_R     = 0.12   -- x the radius
+M.INFO_DOT_Y     = -0.44  -- x the radius, up from the centre
+M.INFO_STEM_TOP  = -0.14  -- x the radius
+M.INFO_STEM_BOT  = 0.46   -- x the radius
+M.INFO_STEM_W    = 0.16   -- x the radius
 M.DIM_CONTENT    = 0.30   -- 0..1; opacity of the window's content while the
                           -- About dialog is open. Fades everything toward the
                           -- dark background, so bright elements lose the most --
@@ -47,12 +62,9 @@ M.GLYPH_NUDGE_Y  = -0.02  -- x the text height; lifts a glyph off the line box.
                           -- text height, so it holds at any font size.
 
 local ImGui, ctx
-local FONT                 -- the font drawn labels are rendered with
 local nvars, ncols = 0, 0
 
---- `font` is the window's own font. Labels this module draws go on the draw
---- list, which has to be told the font explicitly -- see draw_label.
-function M.init(imgui, context, font) ImGui, ctx, FONT = imgui, context, font end
+function M.init(imgui, context) ImGui, ctx = imgui, context end
 
 --- Round to a whole LOGICAL pixel. A fractional padding puts a frame's edges on
 --- half a pixel, and the halves round in opposite directions top and bottom, so
@@ -146,35 +158,13 @@ local function live(idx)
          or ImGui.GetStyleColor(ctx, idx)
 end
 
---- Draw `text` centred in the rect, optionally at a size other than the
---- window's.
----
---- DrawList_AddTextEx, which takes the font and the size, NOT DrawList_AddText,
---- which takes neither: that one draws with the draw list's DEFAULT font and
---- size -- the ones the window began the frame with -- and ignores whatever
---- PushFont has put on the stack. Measuring at the pushed size and drawing at
---- the default one puts the glyph up and to the left of centre by exactly the
---- difference, which is what the first version of the info button did.
-local function draw_label(x0, y0, x1, y1, text, size)
+local function draw_label(x0, y0, x1, y1, text)
   if text == '' then return end
-
-  local base = ImGui.GetFontSize(ctx)
-  size = size or base
-
-  -- Measure at the size it will be drawn at.
-  local tw, th
-  if size == base then
-    tw, th = ImGui.CalcTextSize(ctx, text)
-  else
-    ImGui.PushFont(ctx, FONT, size)
-    tw, th = ImGui.CalcTextSize(ctx, text)
-    ImGui.PopFont(ctx)
-  end
-
-  ImGui.DrawList_AddTextEx(ImGui.GetWindowDrawList(ctx), FONT, size,
-                           x0 + ((x1 - x0) - tw) * 0.5,
-                           y0 + ((y1 - y0) - th) * 0.5 + th * M.GLYPH_NUDGE_Y,
-                           live(ImGui.Col_Text), text)
+  local tw, th = ImGui.CalcTextSize(ctx, text)
+  ImGui.DrawList_AddText(ImGui.GetWindowDrawList(ctx),
+                         x0 + ((x1 - x0) - tw) * 0.5,
+                         y0 + ((y1 - y0) - th) * 0.5 + th * M.GLYPH_NUDGE_Y,
+                         live(ImGui.Col_Text), text)
 end
 
 --- A button whose label this module draws, so it can be centred by the ink
@@ -203,14 +193,10 @@ function M.button(label, w, h)
   return clicked
 end
 
-local INFO_GLYPH = '\u{24D8}'   -- CIRCLED LATIN SMALL LETTER I
-
---- A square button carrying the circled "i" glyph.
+--- A square button carrying the info icon.
 ---
---- The button is laid out under the WINDOW's font, so it shares a baseline with
---- its neighbours on the line; only the glyph is drawn larger. Pushing the
---- bigger font around ImGui.Button instead raised the whole button above the
---- row, because ImGui aligns a line from the text height current at that call.
+--- The button is laid out under the window's font, so it shares a baseline with
+--- its neighbours on the line; the icon is drawn into the rect afterwards.
 function M.info_button(id)
   local sz = ImGui.GetFrameHeight(ctx)
   local clicked = ImGui.Button(ctx, '##info_' .. id, sz, sz)
@@ -218,7 +204,20 @@ function M.info_button(id)
   local x0, y0 = ImGui.GetItemRectMin(ctx)
   local x1, y1 = ImGui.GetItemRectMax(ctx)
   if x0 then
-    draw_label(x0, y0, x1, y1, INFO_GLYPH, ImGui.GetFontSize(ctx) * M.INFO_SCALE)
+    local dl   = ImGui.GetWindowDrawList(ctx)
+    local col  = live(ImGui.Col_Text)
+    local cx   = (x0 + x1) * 0.5
+    local cy   = (y0 + y1) * 0.5
+    local side = math.min(x1 - x0, y1 - y0)
+    local r    = side * M.INFO_RADIUS
+
+    ImGui.DrawList_AddCircle(dl, cx, cy, r, col, 0,
+                             math.max(1, side * M.INFO_THICKNESS))
+    ImGui.DrawList_AddCircleFilled(dl, cx, cy + r * M.INFO_DOT_Y,
+                                   math.max(1, r * M.INFO_DOT_R), col)
+    ImGui.DrawList_AddLine(dl, cx, cy + r * M.INFO_STEM_TOP,
+                               cx, cy + r * M.INFO_STEM_BOT,
+                           col, math.max(1, r * M.INFO_STEM_W))
   end
 
   return clicked

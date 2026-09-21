@@ -49,7 +49,7 @@ local MONO = ImGui.CreateFont('monospace')    -- the reports are column-aligned
 ImGui.Attach(ctx, SANS)
 ImGui.Attach(ctx, MONO)
 
-theme.init(ImGui, ctx, SANS)
+theme.init(ImGui, ctx)
 
 local BUTTONS = {
   { 'Plain Text', 'plaintext' },
