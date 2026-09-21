@@ -111,10 +111,8 @@ end
 -- again by the next one, and the leak would compound.
 local function preview()
   ImGui.PushFont(ctx, MONO, FONT_SIZE)
-  theme.push_panel_bg()
   local ok, err = pcall(ImGui.InputTextMultiline, ctx, '##preview', st.preview,
                         -1, -1, ImGui.InputTextFlags_ReadOnly)
-  theme.pop_panel_bg()
   ImGui.PopFont(ctx)
   if not ok then error(err, 0) end
 end
