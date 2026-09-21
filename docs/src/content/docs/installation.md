@@ -3,39 +3,44 @@ title: Installation
 description: Install the script and ReaImGui through ReaPack.
 ---
 
-## 1. Install ReaImGui
-
-In REAPER, open *Extensions → ReaPack → Browse packages*. Search for
-`ReaImGui`, right-click it and choose *Install*. Restart REAPER.
-
-## 2. Add the repository
-
-Open *Extensions → ReaPack → Import repositories* and paste:
+The easiest way is to use ReaPack.
 
 ```
 https://github.com/michal-bartak/ReaPack/raw/main/index.xml
 ```
 
-This is the **MXM Scripts** repository. It carries all of my REAPER scripts.
+In REAPER
+* open *Extensions → ReaPack → Import repositories* and paste that URL. 
+* open *Extensions → ReaPack → Browse packages*, find **List of Instruments and Effects** and install it.
 
-## 3. Install the script
+ReaPack adds `MXM List of Instruments and Effects` actions to the Action List as well as deploy dedicated [toolbar icon](#the-toolbar-icons)
 
-Open *Extensions → ReaPack → Browse packages*, find
-**List of Instruments and Effects**, right-click and choose *Install*.
+:::note
+Add this script to toolbar of your choice, then assigning the icon.
 
-The script installs to `Scripts/MXM Scripts/MXM_ListOfInstrumentsAndEffects/`
-under REAPER's resource path.
+To quickly find action or icons, search for `mxm`.
+:::
 
-## 4. Run it
+<details>
+<summary>Manual installation steps</summary>
 
-Open the Action List and search for *List of Instruments and Effects*.
+1. Open *Options → Show REAPER resource path in explorer/finder*. Everything below goes into that
+   folder:
 
-## Toolbar button
+   | OS | Resource path |
+   |----|------|
+   | macOS | `~/Library/Application Support/REAPER/` |
+   | Windows | `%AppData%\REAPER\` |
+   | Linux | `~/.config/REAPER/` |
 
-The package ships a toolbar icon at three resolutions. To use it, right-click a
-toolbar, choose *Customize toolbar*, add the action, then set its icon to
-`mxm_toolbar_list_of_instruments_and_effects.png`.
+1. Copy the **contents** of `Reaper/` over it, merging with what is already there:
 
-## Upgrading from 2.x
+   ```
+   Reaper/Scripts/MXM_ListOfInstrumentsAndEffects/  ->  <resource path>/Scripts/MXM_ListOfInstrumentsAndEffects/
+   Reaper/Data/toolbar_icons/         ->  <resource path>/Data/toolbar_icons/
+   ```
 
-Install ReaImGui first. Without it, version 3.0 shows a message box and stops.
+In REAPER
+* open *Actions → Show action list → New action → Load ReaScript*, and load the lua script.
+* add the action to toolbar of choice, assigning provided icon
+</details>
