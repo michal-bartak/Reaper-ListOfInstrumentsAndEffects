@@ -13,10 +13,16 @@ npm run build    # static site into dist/
 ## Layout
 
 ```
-astro.config.mjs       site config and the sidebar
+astro.config.mjs       site config, the sidebar, and the lightbox script
 src/content/docs/      the pages, as Markdown
-public/                favicons, rendered by `npm run icon` in the repo root
+src/styles/custom.css  accent colour, figures, the lightbox, the theme picker
+public/                favicons, rendered by `make icon` in the repo root
 ```
+
+The theme is [starlight-theme-rapide](https://github.com/HiDeoo/starlight-theme-rapide),
+the same one the AutoColor docs use, with Starlight's own Dark/Light/Auto picker
+put back in place of rapide's two-state button. That override logs one build
+warning; it is expected.
 
 The logo is `../icon/icon.svg`, outside this project: it belongs to the script,
 not to the site. Astro bundles it from there.

@@ -1,0 +1,83 @@
+/* Ported from the AutoColor docs, so both sites read as one. Anything specific to that
+   project's content -- the generated colouring diagrams, the inline rule swatches, the
+   toolbar-icon glyph -- is left there. */
+
+:root {
+  --sl-color-accent: #3a73e8 !important;
+  --sl-color-accent-high: var(--sl-color-accent) !important;
+}
+
+/* Click a screenshot in the docs body to view it full-size in a lightbox. */
+.sl-markdown-content img {
+  cursor: zoom-in;
+  border-radius: 6px;
+}
+
+.shot {
+  margin: 1.5rem 0;
+}
+
+.shot figcaption {
+  margin-top: 0.5rem;
+  font-size: var(--sl-text-sm);
+  color: var(--sl-color-gray-2);
+  text-align: center;
+}
+
+.img-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.85);
+  cursor: zoom-out;
+}
+
+.img-lightbox.open {
+  display: flex;
+}
+
+.img-lightbox img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Theme picker (Starlight's own Dark/Light/Auto <select>, which astro.config.mjs restores in
+   place of starlight-theme-rapide's two-state icon button).
+
+   The <select> keeps stock Starlight geometry -- the only things touched here are the space
+   around it and the focus ring. Both fixes exist because rapide's header spacing was tuned for
+   ITS icon button, which carried `margin-inline: 0.5rem`, whereas Starlight's select carries the
+   opposite: `margin-inline: -0.5rem`, i.e. its painted box overflows 8px past the element on each
+   side. So where rapide removed spacing expecting the button to supply it, the select instead eats
+   8px more.
+
+   Both selectors copy rapide's own, and `!important` is what makes them win: Starlight appends
+   plugin CSS AFTER user customCss, so rapide's stylesheet loads after this file and equal
+   specificity loses on order. Same reason as the accent overrides at the top of this file. */
+header.header .right-group {
+  gap: 1rem !important;
+}
+
+@media (min-width: 50rem) {
+  header.header:not(:has(starlight-lang-select)),
+  [data-has-sidebar] header.header:not(:has(starlight-lang-select)) {
+    padding-inline-end: var(--sl-nav-pad-x) !important;
+  }
+}
+
+starlight-theme-select select:focus-visible {
+  outline: none;
+}
+
+starlight-theme-select label:is(:hover, :focus-within) {
+  color: var(--sl-color-accent-high);
+}
