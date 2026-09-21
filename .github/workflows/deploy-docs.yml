@@ -1,0 +1,41 @@
+name: Deploy docs
+
+on:
+  push:
+    branches: [main]
+    paths: ['docs/**', 'icon/**', '.github/workflows/deploy-docs.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    # GitHub Pages requires a paid plan for private repos, where the deploy fails.
+    # Skip the whole workflow while the repo is private; runs once it's public.
+    if: ${{ github.event.repository.private == false }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: withastro/action@v6
+        with:
+          path: docs
+          package-manager: npm
+
+  deploy:
+    needs: build
+    if: ${{ github.event.repository.private == false }}
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v5

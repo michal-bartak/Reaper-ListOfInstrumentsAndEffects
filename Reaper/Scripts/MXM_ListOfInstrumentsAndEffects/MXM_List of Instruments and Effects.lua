@@ -38,6 +38,8 @@ end
 ------------------------------------------------------------------- start up
 local scan   = require 'scan'
 local report = require 'report'
+local about  = require 'about'
+local theme  = require 'theme'
 
 local FONT_SIZE = 14
 
@@ -47,6 +49,8 @@ local MONO = ImGui.CreateFont('monospace')    -- the reports are column-aligned
 ImGui.Attach(ctx, SANS)
 ImGui.Attach(ctx, MONO)
 
+theme.init(ImGui, ctx)
+
 local BUTTONS = {
   { 'Plain Text', 'plaintext' },
   { 'Markdown',   'markdown'  },
@@ -54,9 +58,12 @@ local BUTTONS = {
   { 'BB Code',    'bbcode'    },
 }
 
+local ABOUT = 'About##dialog'
+
 local st = {
   fmt     = 'plaintext',  -- the format the last Copy button chose
   debug   = false,
+  about   = false,        -- set by the button, cleared once the popup is open
   buckets = nil,
   copy    = '',           -- what a Copy button would put on the clipboard
   preview = '',           -- what the window shows
@@ -103,12 +110,63 @@ local function preview()
   if not ok then error(err, 0) end
 end
 
+local function about_body(FS)
+  ImGui.Text(ctx, about.NAME)
+  ImGui.SameLine(ctx)
+  ImGui.TextColored(ctx, 0x808080FF, about.VERSION)
+
+  ImGui.Spacing(ctx)
+  ImGui.TextWrapped(ctx, about.TAGLINE)
+
+  theme.section('Links', true)
+  -- TextLinkOpenURL opens the browser itself, so this needs no SWS and no
+  -- shell-out of our own.
+  ImGui.TextLinkOpenURL(ctx, 'Documentation', about.URL_DOCS)
+  ImGui.TextLinkOpenURL(ctx, 'Source code on GitHub', about.URL_REPO)
+
+  theme.section('Author', true)
+  ImGui.Text(ctx, about.AUTHOR)
+
+  theme.section('Licence', true)
+  ImGui.TextWrapped(ctx, about.LICENCE .. '. ' .. about.COPYRIGHT .. '.')
+
+  ImGui.Spacing(ctx)
+  ImGui.Separator(ctx)
+  ImGui.Spacing(ctx)
+  local bw = FS * 8
+  theme.center(bw)
+  if theme.button('Close##about', bw) then ImGui.CloseCurrentPopup(ctx) end
+end
+
+-- A modal popup rather than a window of its own: ImGui closes it on Escape and
+-- keeps it centred over the parent for free.
+--
+-- EndPopup is guaranteed, for the same reason PopFont is in preview(): a popup
+-- left open by a failed frame corrupts the stack for every frame after it.
+local function about_dialog(FS)
+  if st.about then
+    ImGui.OpenPopup(ctx, ABOUT)
+    st.about = false
+  end
+
+  ImGui.SetNextWindowSize(ctx, FS * 28, 0, ImGui.Cond_Always)
+  ImGui.PushStyleVar(ctx, ImGui.StyleVar_WindowPadding,
+                     FS * theme.MODAL_PAD, FS * theme.MODAL_PAD)
+  local open = ImGui.BeginPopupModal(ctx, ABOUT, nil, ImGui.WindowFlags_NoResize)
+  ImGui.PopStyleVar(ctx)
+  if not open then return end
+
+  local ok, err = pcall(about_body, FS)
+  ImGui.EndPopup(ctx)
+  if not ok then error(err, 0) end
+end
+
 local function draw(FS)
-  ImGui.SeparatorText(ctx, 'Copy to clipboard')
+  theme.section('Copy to clipboard')
 
   for i, b in ipairs(BUTTONS) do
     if i > 1 then ImGui.SameLine(ctx) end
-    if ImGui.Button(ctx, b[1], FS * 5.5) then
+    if theme.button(b[1], FS * 5.5) then
       st.fmt = b[2]
       rescan()
       ImGui.SetClipboardText(ctx, st.copy)
@@ -121,6 +179,16 @@ local function draw(FS)
     st.debug = debug
     render()
   end
+
+  -- About sits at the right edge, out of the way of the Copy buttons.
+  ImGui.SameLine(ctx)
+  local sz = theme.icon_size()
+  ImGui.SetCursorPosX(ctx, ImGui.GetCursorPosX(ctx) +
+                           ImGui.GetContentRegionAvail(ctx) - sz)
+  if theme.info_button('about') then st.about = true end
+  if ImGui.IsItemHovered(ctx) then ImGui.SetTooltip(ctx, 'About') end
+
+  about_dialog(FS)
 
   ImGui.Spacing(ctx)
   preview()
@@ -136,6 +204,7 @@ local function frame()
   -- multiplying by GetWindowDpiScale (2.0 on a Retina Mac) would draw it double
   -- size.
   local FS = ImGui.GetFontSize(ctx)
+  theme.push(FS)          -- before Begin, so the window itself is rounded
 
   poll_project()
 
@@ -150,6 +219,7 @@ local function frame()
     ImGui.End(ctx)        -- ONLY when Begin returned true
   end
 
+  theme.pop()             -- always, and before PopFont
   ImGui.PopFont(ctx)      -- always, Begin or not
 
   if open then reaper.defer(frame) end   -- 0.10 closes by not re-deferring

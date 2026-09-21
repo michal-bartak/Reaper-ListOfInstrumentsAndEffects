@@ -3,6 +3,7 @@
 -- @version 3.0
 -- @metapackage true
 -- @link GitHub https://github.com/michal-bartak/ListOfInstrumentsAndEffects
+-- @link Documentation https://michal-bartak.github.io/ListOfInstrumentsAndEffects/
 -- @screenshot https://raw.githubusercontent.com/michal-bartak/ListOfInstrumentsAndEffects/main/images/List_of_Instruments_and_Effects.png
 -- @provides
 --   [main] /Reaper/Scripts/MXM_ListOfInstrumentsAndEffects/MXM_List of Instruments and Effects.lua > ../MXM_ListOfInstrumentsAndEffects/
@@ -37,6 +38,9 @@
 --   whichever export format you copy; tick `debug` to make it show exactly what
 --   goes to the clipboard.
 --
+--   The ⓘ button shows the version, the licence and a link to the
+--   documentation.
+--
 --   Requires **ReaImGui 0.10 or newer**, available on ReaPack. Nothing else --
 --   neither Lokasenna's GUI library nor SWS is needed any more.
 --
@@ -58,6 +62,9 @@
 --   Record input FX are counted, in a new **Input FX** section. Only the master
 --   track's input chain -- the monitoring chain -- was read before, so input FX
 --   on ordinary tracks were invisible.
+--
+--   The window has an ⓘ button: the version you are running, the author, the
+--   licence, and links to the documentation and the source.
 --
 --   The report no longer goes stale between clicks: it refreshes itself when
 --   the project changes or you switch project tab. It also follows the project
