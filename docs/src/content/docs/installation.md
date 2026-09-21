@@ -21,6 +21,13 @@ Add this script to toolbar of your choice, then assigning the icon.
 To quickly find action or icons, search for `mxm`.
 :::
 
+## The toolbar icons
+
+<img src="/ListOfInstrumentsAndEffects/toolbar-list-of-instruments-and-effects.svg" width="72" alt="The toolbar icon" />
+
+ReaPack installs the icon into `Data/toolbar_icons/` at three sizes -- 1x, 150%
+and 200% -- so REAPER picks the one your display needs.
+
 <details>
 <summary>Manual installation steps</summary>
 

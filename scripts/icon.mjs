@@ -92,6 +92,12 @@ for (const size of [16, 32, 48]) {
   );
 }
 
+// 1b. The mark as a flat SVG, for the docs to show beside the toolbar section. A copy of the
+//     master rather than new art, so `make icon` keeps the two in step and there is still only
+//     one hand-drawn file. public/ again: it is referenced by <img src> at a fixed size, not
+//     through Astro's image pipeline.
+await write(join(DOCS_PUBLIC, 'toolbar-list-of-instruments-and-effects.svg'), Buffer.from(master));
+
 // 2. The README mark. A PNG, not the SVG: GitHub's markdown sanitiser is fussier about SVG.
 await write(
   join(REPO, 'icon', 'instruments-effects-128.png'),
