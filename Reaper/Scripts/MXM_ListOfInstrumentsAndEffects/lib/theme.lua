@@ -34,22 +34,7 @@ M.SECTION_SCALE  = 1.07   -- x font size, for section headings
 M.SECTION_CASE   = 'upper'-- 'upper' (LIKE THIS) | 'title' (Like This) | 'none'
 M.SECTION_ALPHA  = 0.75   -- headings sit back a little from body text
 M.MODAL_PAD      = 1.20   -- x font size; padding inside a modal dialog
--- The info icon is DRAWN, not typed. Centring a glyph centres its ADVANCE box,
--- and the ink sits off-centre inside that box by the glyph's side bearings:
--- measured off a screenshot at 2x, the circled "i" landed 2 device px left and
--- 1.5 up of the button's centre. ImGui exposes no per-glyph metrics to correct
--- for, and U+24D8 is missing from plenty of system fonts besides. Geometry has
--- neither problem, and it stays centred at any size.
---
--- Every proportion is a fraction of the circle's radius, which is itself a
--- fraction of the button, so the icon holds its shape as the font size changes.
-M.INFO_RADIUS    = 0.34   -- x the button side
-M.INFO_THICKNESS = 0.055  -- x the button side
-M.INFO_DOT_R     = 0.12   -- x the radius
-M.INFO_DOT_Y     = -0.44  -- x the radius, up from the centre
-M.INFO_STEM_TOP  = -0.14  -- x the radius
-M.INFO_STEM_BOT  = 0.46   -- x the radius
-M.INFO_STEM_W    = 0.16   -- x the radius
+M.INFO_SCALE     = 1.25   -- x font size; the circled "i" glyph, which is small
 M.DIM_CONTENT    = 0.30   -- 0..1; opacity of the window's content while the
                           -- About dialog is open. Fades everything toward the
                           -- dark background, so bright elements lose the most --
@@ -193,33 +178,12 @@ function M.button(label, w, h)
   return clicked
 end
 
---- A square button carrying the info icon.
----
---- The button is laid out under the window's font, so it shares a baseline with
---- its neighbours on the line; the icon is drawn into the rect afterwards.
+--- A square button carrying the circled "i" glyph, U+24D8.
 function M.info_button(id)
   local sz = ImGui.GetFrameHeight(ctx)
-  local clicked = ImGui.Button(ctx, '##info_' .. id, sz, sz)
-
-  local x0, y0 = ImGui.GetItemRectMin(ctx)
-  local x1, y1 = ImGui.GetItemRectMax(ctx)
-  if x0 then
-    local dl   = ImGui.GetWindowDrawList(ctx)
-    local col  = live(ImGui.Col_Text)
-    local cx   = (x0 + x1) * 0.5
-    local cy   = (y0 + y1) * 0.5
-    local side = math.min(x1 - x0, y1 - y0)
-    local r    = side * M.INFO_RADIUS
-
-    ImGui.DrawList_AddCircle(dl, cx, cy, r, col, 0,
-                             math.max(1, side * M.INFO_THICKNESS))
-    ImGui.DrawList_AddCircleFilled(dl, cx, cy + r * M.INFO_DOT_Y,
-                                   math.max(1, r * M.INFO_DOT_R), col)
-    ImGui.DrawList_AddLine(dl, cx, cy + r * M.INFO_STEM_TOP,
-                               cx, cy + r * M.INFO_STEM_BOT,
-                           col, math.max(1, r * M.INFO_STEM_W))
-  end
-
+  ImGui.PushFont(ctx, nil, ImGui.GetFontSize(ctx) * M.INFO_SCALE)
+  local clicked = M.button('\u{24D8}##' .. id, sz, sz)
+  ImGui.PopFont(ctx)
   return clicked
 end
 

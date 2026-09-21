@@ -41,7 +41,7 @@ local report = require 'report'
 local about  = require 'about'
 local theme  = require 'theme'
 
-local FONT_SIZE = 14
+local FONT_SIZE = 12
 
 local ctx  = ImGui.CreateContext('List of Instruments and Effects')
 local SANS = ImGui.CreateFont('sans-serif')   -- 0.10: no size here
