@@ -33,10 +33,11 @@
 --   - **BB plain** -- some BBCode formatting, such as bold
 --   - **BB code** -- wrapped in `[CODE]` tags to force a fixed-width font
 --
---   The report follows the project: edit it, or switch to another project tab,
---   and the window catches up by itself. Normally the window shows plain text
---   whichever export format you copy; tick `debug` to make it show exactly what
---   goes to the clipboard.
+--   The report is built when the window opens, and rebuilt whenever you press a
+--   Copy button or toggle `debug`. Each rebuild reads the project you are
+--   looking at now, so it picks up a switch to another project tab. Normally
+--   the window shows plain text whichever export format you copy; tick `debug`
+--   to make it show exactly what goes to the clipboard.
 --
 --   The ⓘ button shows the version, the licence and a link to the
 --   documentation.
@@ -68,10 +69,11 @@
 --   dims while the dialog is open. Close it with its Close button, with Escape,
 --   or by clicking outside it.
 --
---   The report no longer goes stale between clicks: it refreshes itself when
---   the project changes or you switch project tab. It also follows the project
---   you are actually looking at, where before the track list was read from
---   whichever project was open when the script started.
+--   The report follows the project you are actually looking at. Before, the
+--   track list was read from whichever project was open when the script
+--   started, while the master and monitoring chains followed the current one,
+--   so after switching project tab the two halves of the report described
+--   different projects.
 
 -- This file is the ReaPack manifest and nothing else. The directory it sits in
 -- names the category the package is listed under; the @provides lines above

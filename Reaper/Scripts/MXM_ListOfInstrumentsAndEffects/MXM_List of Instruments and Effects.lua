@@ -74,8 +74,6 @@ local st = {
   buckets = nil,
   copy    = '',           -- what a Copy button would put on the clipboard
   preview = '',           -- what the window shows
-  projfn  = nil,          -- project identity, to notice a tab switch
-  state   = nil,          -- GetProjectStateChangeCount, to notice an edit
 }
 
 -- Formats the cached scan. Normally the window shows plain text whichever
@@ -90,20 +88,11 @@ local function rescan()
   render()
 end
 
--- Scanning every frame would walk the whole project 60 times a second, so the
--- report is rebuilt only when the project actually moved underneath it. The
--- file name catches a switch to another project tab; the change count catches
--- an edit within one. Comparing the name rather than the ReaProject avoids
--- relying on two calls returning the same userdata.
-local function poll_project()
-  local _, projfn = reaper.EnumProjects(-1, '')
-  local state = reaper.GetProjectStateChangeCount(0)
-
-  if projfn ~= st.projfn or state ~= st.state then
-    st.projfn, st.state = projfn, state
-    rescan()
-  end
-end
+-- The project is scanned when the window opens, when a Copy button is pressed,
+-- and when Debug is toggled. Not every frame: the window would then re-walk
+-- every FX chain 60 times a second, and REAPER's change counter ticks
+-- continuously while a fader or an item is being dragged, so a drag would hold
+-- it at a full rescan per frame.
 
 ------------------------------------------------------------------ the window
 -- The report is column-aligned, so it is drawn in the monospace font. The pop
@@ -216,7 +205,7 @@ local function draw(FS)
   local changed, debug = ImGui.Checkbox(ctx, 'Debug', st.debug)
   if changed then
     st.debug = debug
-    render()
+    rescan()
   end
 
   -- About sits at the right edge, out of the way of the Copy buttons.
@@ -242,8 +231,6 @@ local function frame()
   -- size.
   local FS = ImGui.GetFontSize(ctx)
   theme.push(FS)          -- before Begin, so the window itself is rounded
-
-  poll_project()
 
   ImGui.SetNextWindowSize(ctx, FS * 46, FS * 34, ImGui.Cond_FirstUseEver)
   -- Absolute, not a multiple of the font: below this the button row wraps and
@@ -284,6 +271,5 @@ local function frame()
   if open then reaper.defer(frame) end   -- 0.10 closes by not re-deferring
 end
 
--- poll_project() runs before the first Begin, so the window has its report
--- ready on the very first frame.
+rescan()          -- the window has its report before the first frame
 reaper.defer(frame)

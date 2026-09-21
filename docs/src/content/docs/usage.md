@@ -36,8 +36,12 @@ Close button, with Escape, or by clicking outside it.
 
 ## Refreshing
 
-The report refreshes itself when you edit the project or switch project tab.
-Pressing a Copy button also refreshes it.
+The report is built when the window opens. It is rebuilt when you press a Copy
+button and when you toggle Debug. It does not follow the project on its own, so
+after editing the project press a Copy button to bring it up to date.
+
+Each rebuild reads the project you are looking at now, so it also picks up a
+switch to another project tab.
 
 ## The preview
 

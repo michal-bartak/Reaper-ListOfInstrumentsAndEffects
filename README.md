@@ -16,7 +16,7 @@ Currently available options are:
 
 The ⓘ button shows the version, the licence and links to the documentation and the source.
 
-The report refreshes itself when the project changes or you switch project tab, so it never goes stale.
+The report is built when the window opens, and rebuilt when you press a Copy button or toggle `debug`. Each rebuild reads the project you are looking at now, so it picks up a switch to another project tab.
 Normally the report shown in the script window is plain text, regardless format selected by pressing the export button. With the `debug` checkbox checked, the report shown in the window will be the same as the content copied into the clipboard.
 
 ## What gets counted
