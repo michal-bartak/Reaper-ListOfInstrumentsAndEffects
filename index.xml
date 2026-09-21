@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<index version="1" name="List of Instruments and Effects" commit="57ff2badcd0a758da9e871a3fc25306f743b1256">
+<index version="1" name="List of Instruments and Effects" commit="7abf10a9703637bd1630e42178420e9b80a2e986">
   <category name="Various">
     <reapack name="MXM_List of Instruments and Effects.lua" type="script" desc="List of Instruments and Effects">
       <metadata>
@@ -31,6 +31,19 @@
         <source type="data" file="toolbar_icons/mxm_toolbar_list_of_instruments_and_effects.png">https://github.com/michal-bartak/ListOfInstrumentsAndEffects/raw/57ff2badcd0a758da9e871a3fc25306f743b1256/Reaper/Data/toolbar_icons/mxm_toolbar_list_of_instruments_and_effects.png</source>
         <source type="data" file="toolbar_icons/150/mxm_toolbar_list_of_instruments_and_effects.png">https://github.com/michal-bartak/ListOfInstrumentsAndEffects/raw/57ff2badcd0a758da9e871a3fc25306f743b1256/Reaper/Data/toolbar_icons/150/mxm_toolbar_list_of_instruments_and_effects.png</source>
         <source type="data" file="toolbar_icons/200/mxm_toolbar_list_of_instruments_and_effects.png">https://github.com/michal-bartak/ListOfInstrumentsAndEffects/raw/57ff2badcd0a758da9e871a3fc25306f743b1256/Reaper/Data/toolbar_icons/200/mxm_toolbar_list_of_instruments_and_effects.png</source>
+      </version>
+      <version name="2.1" author="Michal MaXyM Bartak" time="2026-09-21T09:16:46Z">
+        <changelog><![CDATA[The script now installs to
+Scripts/MXM Scripts/MXM_ListOfInstrumentsAndEffects/ instead of
+Scripts/MXM Scripts/Various/, so the installed tree matches the
+repository. ReaPack moves the file for you, but REAPER identifies an
+action by its path: toolbar buttons, keyboard shortcuts and custom
+actions bound to the old location must be pointed at the new one after
+updating.]]></changelog>
+        <source main="main" file="../MXM_ListOfInstrumentsAndEffects/MXM_List of Instruments and Effects.lua">https://github.com/michal-bartak/ListOfInstrumentsAndEffects/raw/7abf10a9703637bd1630e42178420e9b80a2e986/Reaper/Scripts/MXM_ListOfInstrumentsAndEffects/MXM_List%20of%20Instruments%20and%20Effects.lua</source>
+        <source type="data" file="toolbar_icons/mxm_toolbar_list_of_instruments_and_effects.png">https://github.com/michal-bartak/ListOfInstrumentsAndEffects/raw/7abf10a9703637bd1630e42178420e9b80a2e986/Reaper/Data/toolbar_icons/mxm_toolbar_list_of_instruments_and_effects.png</source>
+        <source type="data" file="toolbar_icons/150/mxm_toolbar_list_of_instruments_and_effects.png">https://github.com/michal-bartak/ListOfInstrumentsAndEffects/raw/7abf10a9703637bd1630e42178420e9b80a2e986/Reaper/Data/toolbar_icons/150/mxm_toolbar_list_of_instruments_and_effects.png</source>
+        <source type="data" file="toolbar_icons/200/mxm_toolbar_list_of_instruments_and_effects.png">https://github.com/michal-bartak/ListOfInstrumentsAndEffects/raw/7abf10a9703637bd1630e42178420e9b80a2e986/Reaper/Data/toolbar_icons/200/mxm_toolbar_list_of_instruments_and_effects.png</source>
       </version>
     </reapack>
   </category>
