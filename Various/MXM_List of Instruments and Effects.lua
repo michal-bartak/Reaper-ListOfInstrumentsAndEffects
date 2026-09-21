@@ -1,11 +1,12 @@
 -- @description List of Instruments and Effects
 -- @author Michal MaXyM Bartak
--- @version 2.1
+-- @version 3.0
 -- @metapackage true
 -- @link GitHub https://github.com/michal-bartak/ListOfInstrumentsAndEffects
 -- @screenshot https://raw.githubusercontent.com/michal-bartak/ListOfInstrumentsAndEffects/main/images/List_of_Instruments_and_Effects.png
 -- @provides
 --   [main] /Reaper/Scripts/MXM_ListOfInstrumentsAndEffects/MXM_List of Instruments and Effects.lua > ../MXM_ListOfInstrumentsAndEffects/
+--   [nomain] /Reaper/Scripts/MXM_ListOfInstrumentsAndEffects/lib/*.lua > ../MXM_ListOfInstrumentsAndEffects/lib/
 --   [data] /Reaper/Data/toolbar_icons/*.png > toolbar_icons/
 --   [data] /Reaper/Data/toolbar_icons/150/*.png > toolbar_icons/150/
 --   [data] /Reaper/Data/toolbar_icons/200/*.png > toolbar_icons/200/
@@ -16,6 +17,13 @@
 --   categories. The motivation comes from the KVR One Synth Challenge
 --   competition, which requires providing technical details of the production.
 --
+--   Every FX chain REAPER offers is counted: track FX, each track's record
+--   input FX, the master track, the monitoring chain, and the FX on media
+--   items' takes -- including instruments on takes, which is how a MIDI item
+--   makes sound without an instrument on its track. Plugins on a take that is
+--   not the one playing back are reported as inactive, as are bypassed and
+--   offline ones.
+--
 --   Results appear in the window immediately, with buttons to copy them to the
 --   clipboard in several formats:
 --
@@ -24,23 +32,37 @@
 --   - **BB plain** -- some BBCode formatting, such as bold
 --   - **BB code** -- wrapped in `[CODE]` tags to force a fixed-width font
 --
---   Every press of a Copy button regenerates the report, refreshing what is
---   displayed. Normally the window shows plain text whichever export format is
---   selected; tick `debug` to make it show exactly what goes to the clipboard.
+--   The report follows the project: edit it, or switch to another project tab,
+--   and the window catches up by itself. Normally the window shows plain text
+--   whichever export format you copy; tick `debug` to make it show exactly what
+--   goes to the clipboard.
 --
---   Requires **Lokasenna's GUI library v2 for Lua**, available on ReaPack.
---   After installing it, run *Set Lokasenna_GUI v2 library path.lua* once from
---   the Action List.
+--   Requires **ReaImGui 0.10 or newer**, available on ReaPack. Nothing else --
+--   neither Lokasenna's GUI library nor SWS is needed any more.
 --
 --   Written and tested in REAPER 7.x; it may work in earlier versions. GPL v3.
 -- @changelog
---   The script now installs to
---   Scripts/MXM Scripts/MXM_ListOfInstrumentsAndEffects/ instead of
---   Scripts/MXM Scripts/Various/, so the installed tree matches the
---   repository. ReaPack moves the file for you, but REAPER identifies an
---   action by its path: toolbar buttons, keyboard shortcuts and custom
---   actions bound to the old location must be pointed at the new one after
---   updating.
+--   The window is rewritten on ReaImGui. The old one was drawn with Lokasenna's
+--   GUI library v2, which knows nothing about display scaling and so came out
+--   blurry and undersized on a HiDPI screen; the new one is sharp at any
+--   resolution and can be resized. Install **ReaImGui** from ReaPack before
+--   updating. Lokasenna's GUI library is no longer required, and neither is
+--   SWS -- the clipboard now goes through ReaImGui.
+--
+--   Plugins on media items are counted. REAPER lets a take carry its own FX
+--   chain, instruments included, and none of it was reported before: a project
+--   driven by a take instrument listed no instrument at all. FX on the active
+--   take are counted as instruments or effects like any others, and FX on the
+--   other takes are listed under offline/inactive, since they do not play.
+--
+--   Record input FX are counted, in a new **Input FX** section. Only the master
+--   track's input chain -- the monitoring chain -- was read before, so input FX
+--   on ordinary tracks were invisible.
+--
+--   The report no longer goes stale between clicks: it refreshes itself when
+--   the project changes or you switch project tab. It also follows the project
+--   you are actually looking at, where before the track list was read from
+--   whichever project was open when the script started.
 
 -- This file is the ReaPack manifest and nothing else. The directory it sits in
 -- names the category the package is listed under; the @provides lines above
