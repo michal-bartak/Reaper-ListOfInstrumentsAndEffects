@@ -200,6 +200,23 @@ end
 ---
 --- Drawn as plain text rather than SeparatorText, which indents its label by
 --- SeparatorTextPadding.x with no way to reach it per call.
+--- The heading style on its own: set back from body text, cased, a little
+--- larger. No spacing of its own, so it can share a line with something else.
+function M.label(text)
+  local col = ImGui.GetStyleColor(ctx, ImGui.Col_Text)
+  ImGui.PushStyleColor(ctx, ImGui.Col_Text,
+                       (col & ~0xFF) | math.floor(M.SECTION_ALPHA * 255))
+
+  if     M.SECTION_CASE == 'upper' then text = text:upper()
+  elseif M.SECTION_CASE == 'title' then text = titlecase(text) end
+
+  ImGui.PushFont(ctx, nil, ImGui.GetFontSize(ctx) * M.SECTION_SCALE)
+  ImGui.Text(ctx, text)
+  ImGui.PopFont(ctx)
+
+  ImGui.PopStyleColor(ctx)
+end
+
 function M.section(label, divider)
   if divider then
     ImGui.Spacing(ctx)
@@ -207,19 +224,7 @@ function M.section(label, divider)
     ImGui.Spacing(ctx)
   end
 
-  local col = ImGui.GetStyleColor(ctx, ImGui.Col_Text)
-  ImGui.PushStyleColor(ctx, ImGui.Col_Text,
-                       (col & ~0xFF) | math.floor(M.SECTION_ALPHA * 255))
-
-  local text = label
-  if     M.SECTION_CASE == 'upper' then text = label:upper()
-  elseif M.SECTION_CASE == 'title' then text = titlecase(label) end
-
-  ImGui.PushFont(ctx, nil, ImGui.GetFontSize(ctx) * M.SECTION_SCALE)
-  ImGui.Text(ctx, text)
-  ImGui.PopFont(ctx)
-
-  ImGui.PopStyleColor(ctx)
+  M.label(label)
   ImGui.Spacing(ctx)
 end
 

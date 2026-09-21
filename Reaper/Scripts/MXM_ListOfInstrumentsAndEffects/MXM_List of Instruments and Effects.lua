@@ -118,7 +118,7 @@ local function preview()
 end
 
 local function about_body(FS)
-  ImGui.Text(ctx, about.NAME)
+  theme.label(about.NAME)
   ImGui.SameLine(ctx)
   ImGui.TextColored(ctx, 0x808080FF, about.VERSION)
 
