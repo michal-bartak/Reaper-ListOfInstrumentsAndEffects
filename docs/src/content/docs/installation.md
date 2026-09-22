@@ -52,6 +52,6 @@ and 200% -- so REAPER picks the one your display needs.
 
 In REAPER:
 
-* open *Actions → Show action list → New action → Load ReaScript* and load the `.lua` file
+* open *Actions → Show action list → New action → Load ReaScript* and load the `.lua` file from `Scripts/MXM_ListOfInstrumentsAndEffects/` location
 * add the action to a toolbar of your choice, then assign the icon
 </details>
