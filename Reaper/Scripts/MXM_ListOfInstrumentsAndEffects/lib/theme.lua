@@ -2,10 +2,10 @@
   theme.lua -- the look: corners, padding, and how loud the lines are.
 
   A trimmed port of lib/gui/theme.lua from the AutoColor repo, carrying the
-  parts this window has a use for: the style push, and the section heading. The
-  originals of the custom button and checkbox glyphs, the tab and table
-  helpers, and the modal dimming stay there -- this window has no tabs, no
-  tables and no second window to dim.
+  parts this window has a use for: the style push, the section heading, the
+  hand-drawn button and its circled-i variant, and the dimming that fades the
+  window behind the About dialog. The checkbox glyph and the tab and table
+  helpers stay there -- this window has no tabs and no tables.
 
   What ReaImGui 0.10 can and cannot do here:
 
@@ -138,9 +138,20 @@ function M.pop_content_dim()
 end
 
 --- The colour ImGui would use right now, style stack included.
+---
+--- GetColor and not GetStyleColor: GetColor multiplies in the current
+--- StyleVar_Alpha, GetStyleColor hands back the raw style entry and ignores it.
+--- draw_label paints through the draw list, outside ImGui's own widget
+--- rendering, so it has to apply that alpha itself -- otherwise every button's
+--- TEXT would sit at full brightness on top of a faded button for as long as
+--- push_content_dim dims the window behind the About dialog.
+---
+--- Deliberately unguarded. ReaImGui's shim gives the ImGui table an __index
+--- that RAISES on an unknown field, so `ImGui.GetColor and ...` could never
+--- fall back to anything: it would throw instead. GetColor is present in 0.10,
+--- which this script already refuses to start without.
 local function live(idx)
-  return (ImGui.GetColor and ImGui.GetColor(ctx, idx))
-         or ImGui.GetStyleColor(ctx, idx)
+  return ImGui.GetColor(ctx, idx)
 end
 
 local function draw_label(x0, y0, x1, y1, text)
