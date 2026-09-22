@@ -13,7 +13,7 @@ In REAPER
 * open *Extensions → ReaPack → Import repositories* and paste that URL. 
 * open *Extensions → ReaPack → Browse packages*, find **List of Instruments and Effects** and install it.
 
-ReaPack adds `MXM List of Instruments and Effects` actions to the Action List as well as deploy dedicated [toolbar icon](#the-toolbar-icons)
+ReaPack adds `MXM List of Instruments and Effects` actions to the Action List as well as deploy dedicated [toolbar icon](#the-toolbar-icon)
 
 :::note
 Add this script to toolbar of your choice, then assigning the icon.
@@ -21,7 +21,7 @@ Add this script to toolbar of your choice, then assigning the icon.
 To quickly find action or icons, search for `mxm`.
 :::
 
-## The toolbar icons
+## The toolbar icon
 
 <img src="/ListOfInstrumentsAndEffects/toolbar-list-of-instruments-and-effects.svg" width="72" alt="The toolbar icon" />
 

@@ -5,6 +5,8 @@ description: What each control does.
 
 The window opens and shows the report of the current project.
 
+![The report window: four Copy buttons, the Debug checkbox and the ⓘ button above the preview](../../assets/window.png)
+
 ## Copy to clipboard
 
 Four buttons copy the report to the clipboard:
