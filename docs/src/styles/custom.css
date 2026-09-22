@@ -2,9 +2,33 @@
    project's content -- the generated colouring diagrams, the inline rule swatches, the
    toolbar-icon glyph -- is left there. */
 
+/* Brand accent.
+
+   --sl-color-accent is the flat brand blue, used for borders and fills, where
+   contrast ratios do not apply. --sl-color-accent-high is the TEXT variant, and
+   it has to move in OPPOSITE directions per theme -- lighter on the dark
+   background, darker on the light one. Pinning it to the flat blue measured
+   4.31:1 on dark and 4.14:1 on light for the two things drawn in it, the
+   sidebar's current-page link and the site title: both under WCAG AA's 4.5 for
+   normal text. Same hue, lightness moved, measured against the rendered page:
+   6.12:1 and 6.01:1.
+
+   --sl-color-text-accent is set alongside it because Starlight maps that to
+   accent-high in one theme and to accent in the other; pinning it directly is
+   what makes both themes actually move.
+
+   !important throughout because Starlight appends plugin CSS AFTER user
+   customCss, so rapide's stylesheet loads after this file and equal specificity
+   loses on order. */
 :root {
   --sl-color-accent: #3a73e8 !important;
-  --sl-color-accent-high: var(--sl-color-accent) !important;
+  --sl-color-accent-high: #6491ed !important;   /* hsl(220 79% 66%) on #121111 */
+  --sl-color-text-accent: #6491ed !important;
+}
+
+:root[data-theme='light'] {
+  --sl-color-accent-high: #1956d2 !important;   /* hsl(220 79% 46%) on #faf8f8 */
+  --sl-color-text-accent: #1956d2 !important;
 }
 
 /* Click a screenshot in the docs body to view it full-size in a lightbox. */
@@ -74,8 +98,14 @@ header.header .right-group {
   }
 }
 
+/* A ring of our own rather than none at all. Starlight's default sits tight
+   against a control whose painted box already overflows its element by 8px a
+   side, so it read as a smear; removing it outright left keyboard users with
+   nothing but the label colour below, which is not enough on its own. */
 starlight-theme-select select:focus-visible {
-  outline: none;
+  outline: 2px solid var(--sl-color-text-accent);
+  outline-offset: 3px;
+  border-radius: 0.25rem;
 }
 
 starlight-theme-select label:is(:hover, :focus-within) {
