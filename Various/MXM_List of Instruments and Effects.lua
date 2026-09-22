@@ -1,10 +1,10 @@
 -- @description List of Instruments and Effects
 -- @author Michal MaXyM Bartak
--- @version 3.0
+-- @version 3.0.0
 -- @metapackage true
 -- @link GitHub https://github.com/michal-bartak/ListOfInstrumentsAndEffects
 -- @link Documentation https://michal-bartak.github.io/ListOfInstrumentsAndEffects/
--- @screenshot https://raw.githubusercontent.com/michal-bartak/ListOfInstrumentsAndEffects/main/images/List_of_Instruments_and_Effects.png
+-- @screenshot https://raw.githubusercontent.com/michal-bartak/ListOfInstrumentsAndEffects/main/docs/src/assets/window.png
 -- @provides
 --   [main] /Reaper/Scripts/MXM_ListOfInstrumentsAndEffects/MXM_List of Instruments and Effects.lua > ../MXM_ListOfInstrumentsAndEffects/
 --   [nomain] /Reaper/Scripts/MXM_ListOfInstrumentsAndEffects/lib/*.lua > ../MXM_ListOfInstrumentsAndEffects/lib/
@@ -24,6 +24,13 @@
 --   makes sound without an instrument on its track. Plugins on a take that is
 --   not the one playing back are reported as inactive, as are bypassed and
 --   offline ones.
+--
+--   FX containers are followed, however deep they nest. What a container holds
+--   is counted; the container itself is not, being a wrapper rather than a
+--   plugin anyone installed. Bypassing a container, or taking it offline,
+--   marks everything inside it inactive. An offline container's contents are
+--   read out of the project state, since REAPER unloads them and will not
+--   report them any other way.
 --
 --   Results appear in the window immediately, with buttons to copy them to the
 --   clipboard in several formats:
@@ -63,6 +70,20 @@
 --   Record input FX are counted, in a new **Input FX** section. Only the master
 --   track's input chain -- the monitoring chain -- was read before, so input FX
 --   on ordinary tracks were invisible.
+--
+--   FX inside containers are counted. REAPER 7 lets an FX be a container
+--   holding a chain of its own, and everything in one was invisible: the report
+--   named the container and nothing it held. Containers are now followed to any
+--   depth, the container itself is no longer listed as though it were a plugin,
+--   and bypassing or offlining one marks its whole contents inactive. An
+--   OFFLINE container needs special handling: REAPER unloads it and then
+--   answers nothing about it, so its contents are read out of the project
+--   state instead. Reading inside containers needs REAPER 7.06 or newer.
+--
+--   The Markdown tables line up. The `Plugin Name` heading was left out
+--   of the column width, so a section whose longest name was shorter than the
+--   heading drew a heading overhanging its own column; and the padding counted
+--   bytes rather than characters, so any name with an accent came out short.
 --
 --   The window has an ⓘ button: the version you are running, the author, the
 --   licence, and links to the documentation and the source. The window behind
