@@ -93,6 +93,22 @@ check(md:find('**Effects:**\nN/A\n', 1, true) ~= nil,
 local a, s, z = md:find('|Aalto', 1, true), md:find('|Serum', 1, true), md:find('|Zebra', 1, true)
 check(a and s and z and a < s and s < z, 'Markdown: rows are sorted by name')
 
+------------------------------------------------ narrow columns and accents
+-- The heading is a cell too. A section whose widest name is shorter than
+-- "Plugin Name" used to print a heading that overhung its own column.
+local narrow = report.format({ instruments = { EQ = 1 } }, 'markdown')
+check(narrow:find('|Plugin Name|Instances |', 1, true) ~= nil,
+      'Markdown: a short section still prints a full-width heading')
+check(narrow:find('|-----------|---------:|', 1, true) ~= nil,
+      'Markdown: the rule is as wide as the heading')
+check(narrow:find('|EQ         |1         |', 1, true) ~= nil,
+      'Markdown: a name shorter than the heading is padded out to it')
+
+-- Padding counts characters, not bytes: "Ämp Sïm" is 7 characters in 9 bytes.
+local accented = report.format({ instruments = { ['Ämp Sïm'] = 2, EQ = 1 } }, 'markdown')
+check(accented:find('|Ämp Sïm    |2         |', 1, true) ~= nil,
+      'Markdown: an accented name is padded by character, not by byte')
+
 ---------------------------------------------------------------- every format
 for _, fmt in ipairs(report.FORMATS) do
   local out = report.format({}, fmt)

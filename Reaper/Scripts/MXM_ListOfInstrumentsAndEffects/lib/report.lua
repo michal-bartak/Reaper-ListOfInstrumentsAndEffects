@@ -19,9 +19,17 @@ local SECTIONS = {
   { 'offline',     'Offline/inactive plugins' },
 }
 
+-- Characters, not bytes. A vendor or plugin name carrying an accent is more
+-- bytes than characters, and its column came out short by the difference.
+-- Codepoints, not display columns: a CJK name still misaligns, which nothing
+-- short of a width table would fix, and plugin names are not that.
+local function width(s)
+  return utf8.len(s) or #s          -- nil on a malformed sequence
+end
+
 local function PadColumn(content, len)
   local s = tostring(content)
-  return s .. string.rep(' ', len - #s)
+  return s .. string.rep(' ', math.max(0, len - width(s)))
 end
 
 -- Sorted-key iterator. From https://stackoverflow.com/a/15706820
@@ -55,18 +63,23 @@ local function plain_table(counts)
   return found and msg or 'N/A\n'
 end
 
+local NAME_HEADER = 'Plugin Name'
+
 local function markdown_table(counts)
-  local maxnamewidth, quantitywidth, found = 0, 10, false
+  -- The heading is a cell like any other, so it sets the floor for the column.
+  -- Left out, a section whose widest name was shorter than "Plugin Name" drew a
+  -- heading that overhung its own column and the counts stopped lining up.
+  local maxnamewidth, quantitywidth, found = width(NAME_HEADER), 10, false
 
   for name in pairs(counts) do
-    maxnamewidth = math.max(maxnamewidth, #name)
+    maxnamewidth = math.max(maxnamewidth, width(name))
     found = true
   end
 
   if not found then return 'N/A\n' end
 
   local msg = ''
-  msg = msg .. '|' .. PadColumn('Plugin Name', maxnamewidth)
+  msg = msg .. '|' .. PadColumn(NAME_HEADER, maxnamewidth)
   msg = msg .. '|' .. PadColumn('Instances', quantitywidth) .. '|\n'
   msg = msg .. '|' .. PadColumn(string.rep('-', maxnamewidth), maxnamewidth)
   msg = msg .. '|' .. PadColumn(string.rep('-', quantitywidth - 1) .. ':', quantitywidth) .. '|\n'
