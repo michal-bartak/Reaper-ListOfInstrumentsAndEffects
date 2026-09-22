@@ -37,6 +37,20 @@
   border-radius: 6px;
 }
 
+/* A screenshot illustrates the page; it is not the page's subject, and at full
+   column width it read as though it were. Half that, with the lightbox there
+   for anyone who wants to read the text in it.
+
+   Scoped to `p > img`, which is what a Markdown image produces. The toolbar
+   icon in installation.md is raw HTML at a fixed 72px and sits outside any
+   paragraph, so it is left alone. */
+.sl-markdown-content p > img {
+  width: 50%;
+  min-width: min(16rem, 100%);
+  max-width: 100%;
+  height: auto;
+}
+
 .shot {
   margin: 1.5rem 0;
 }

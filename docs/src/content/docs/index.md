@@ -10,6 +10,8 @@ technical details of a production.
 Run the action and the window shows the report at once. Four buttons copy the
 report to the clipboard in different formats.
 
+![The report window, listing the plugins an open project uses](../../assets/window.png)
+
 The report covers every FX chain REAPER has: tracks, track input FX, the master
 track, the monitoring chain, and the FX on media items' takes. See
 [What gets counted](/ListOfInstrumentsAndEffects/counting/).
