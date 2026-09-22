@@ -3,22 +3,25 @@ title: Installation
 description: Install the script and ReaImGui through ReaPack.
 ---
 
-The easiest way is to use ReaPack.
+The easiest way is through ReaPack.
 
 ```
 https://github.com/michal-bartak/ReaPack/raw/main/index.xml
 ```
 
-In REAPER
-* open *Extensions → ReaPack → Import repositories* and paste that URL. 
-* open *Extensions → ReaPack → Browse packages*, find **List of Instruments and Effects** and install it.
+In REAPER:
 
-ReaPack adds `MXM List of Instruments and Effects` actions to the Action List as well as deploy dedicated [toolbar icon](#the-toolbar-icon)
+* open *Extensions → ReaPack → Import repositories* and paste that URL
+* open *Extensions → ReaPack → Browse packages*, find **List of Instruments and Effects**
+  and install it
+
+ReaPack adds the action to the Action List and installs a
+[toolbar icon](#the-toolbar-icon) to go with it.
 
 :::note
-Add this script to toolbar of your choice, then assigning the icon.
+Add the action to a toolbar of your choice, then assign the icon.
 
-To quickly find action or icons, search for `mxm`.
+Search for `mxm` to find either of them quickly.
 :::
 
 ## The toolbar icon
@@ -47,7 +50,8 @@ and 200% -- so REAPER picks the one your display needs.
    Reaper/Data/toolbar_icons/         ->  <resource path>/Data/toolbar_icons/
    ```
 
-In REAPER
-* open *Actions → Show action list → New action → Load ReaScript*, and load the lua script.
-* add the action to toolbar of choice, assigning provided icon
+In REAPER:
+
+* open *Actions → Show action list → New action → Load ReaScript* and load the `.lua` file
+* add the action to a toolbar of your choice, then assign the icon
 </details>
