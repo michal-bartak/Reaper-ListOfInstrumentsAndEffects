@@ -12,7 +12,7 @@ return {
   VERSION = '3.0.0',
   AUTHOR  = 'Michal MaXyM Bartak',
   LICENCE = 'GPL v3',
-  COPYRIGHT = 'Copyright (c) 2026 Michal Bartak',
+  COPYRIGHT = 'Copyright (c) 2023–2026 Michal Bartak',
 
   TAGLINE = 'List every plugin an active REAPER project uses, grouped by category.',
 

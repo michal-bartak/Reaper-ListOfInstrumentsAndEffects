@@ -30,6 +30,9 @@ CHANGELOG.md                release notes; the GitHub release body comes from he
 .github/scripts/package.py  validates the manifest and builds the manual-install zip
 ```
 
+ReaPack installs the script to `Scripts/MXM Scripts/MXM_ListOfInstrumentsAndEffects/`
+under REAPER's resource path.
+
 The package is listed under **Various**, but that is not where the manifest
 lives. `reapack-index` takes the category from the manifest's directory, so this
 repository's own `index.xml` lists it under `ReaPack`. `merge-index.py`, in the
@@ -51,7 +54,9 @@ run anywhere:
 make test
 ```
 
-`tests/mockreaper.lua` stands in for the ReaScript API. REAPER ships Lua 5.4.
+`tests/mockreaper.lua` stands in for the ReaScript API, and
+`tests/test_chunk.lua` runs the state chunk parser against real REAPER output.
+REAPER ships Lua 5.4.
 `run.sh` prefers it when several are installed, and honours `LUA=/path/to/lua`.
 
 ## Icons

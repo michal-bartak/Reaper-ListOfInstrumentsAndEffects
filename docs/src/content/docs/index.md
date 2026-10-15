@@ -18,4 +18,4 @@ track, the monitoring chain, and the FX on media items' takes. See
 
 ## Licence
 
-GPL v3. Copyright (c) 2026 Michal Bartak.
+GPL v3. Copyright (c) 2023–2026 Michal Bartak.
