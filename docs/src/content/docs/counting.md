@@ -3,7 +3,8 @@ title: What gets counted
 description: Which FX chains the report reads, and how each plugin is classified.
 ---
 
-The report has five sections:
+The report opens with the DAW and its version (`REAPER 7.42`), then lists the
+plugins in five sections:
 
 | Section | Where the plugins come from |
 | --- | --- |

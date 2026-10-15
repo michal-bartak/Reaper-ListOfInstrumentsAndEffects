@@ -102,15 +102,30 @@ local FORMATS = {
 
 M.FORMATS = { 'plaintext', 'markdown', 'bbplain', 'bbcode' }
 
+--- The DAW line, from reaper.GetAppVersion(): "7.42/macOS-arm64" -> "REAPER 7.42".
+--- What follows the slash is the build's platform and architecture, which says
+--- nothing about the production. Taken as an argument, so this module still
+--- never touches reaper.*.
+function M.daw(appversion)
+  local v = tostring(appversion or ''):match('^([^/]+)')
+  return v and ('REAPER ' .. v) or 'REAPER'
+end
+
 --[[ Renders buckets in one of the formats named in M.FORMATS.
 
   Sections are separated by a blank line, with none before the first, and an
   empty section still prints its heading over "N/A" so the reader can tell the
   question was asked.
+
+  `daw`, when given, heads the report in a section of its own -- see M.daw().
 ]]
-function M.format(buckets, fmt)
+function M.format(buckets, fmt, daw)
   local f = FORMATS[fmt] or FORMATS.plaintext
   local msg = f.prefix or ''
+
+  if daw then
+    msg = msg .. f.heading('DAW') .. '\n' .. daw .. '\n\n'
+  end
 
   for i, section in ipairs(SECTIONS) do
     local key, title = section[1], section[2]

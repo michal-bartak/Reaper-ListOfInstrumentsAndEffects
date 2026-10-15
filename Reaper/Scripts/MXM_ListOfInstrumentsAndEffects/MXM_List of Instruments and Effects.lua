@@ -2,8 +2,8 @@
   MXM_List of Instruments and Effects.lua -- the report window.
 
   The ReaPack manifest -- description, version, @provides -- lives in
-  Various/MXM_List of Instruments and Effects.lua, which names the category and
-  never ships to Scripts/. Deliberately no @version tag here: any .lua below the
+  ReaPack/MXM_List of Instruments and Effects.lua, which never ships to
+  Scripts/. Deliberately no @version tag here: any .lua below the
   repository root carrying one would be indexed as a package of its own.
 
   Requires ReaImGui 0.10+. The scan and the formatting live in lib/, know
@@ -76,11 +76,14 @@ local st = {
   preview = '',           -- what the window shows
 }
 
+-- The version cannot change while the script runs, so it is read once.
+local DAW = report.daw(reaper.GetAppVersion())
+
 -- Formats the cached scan. Normally the window shows plain text whichever
 -- format was copied; with Debug ticked it shows exactly what was copied.
 local function render()
-  st.copy    = report.format(st.buckets, st.fmt)
-  st.preview = st.debug and st.copy or report.format(st.buckets, 'plaintext')
+  st.copy    = report.format(st.buckets, st.fmt, DAW)
+  st.preview = st.debug and st.copy or report.format(st.buckets, 'plaintext', DAW)
 end
 
 local function rescan()
@@ -202,7 +205,7 @@ local function draw(FS)
   end
 
   ImGui.SameLine(ctx)
-  local changed, debug = ImGui.Checkbox(ctx, 'Debug', st.debug)
+  local changed, debug = theme.checkbox('Debug', st.debug)
   if changed then
     st.debug = debug
     rescan()

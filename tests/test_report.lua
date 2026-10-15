@@ -118,6 +118,24 @@ for _, fmt in ipairs(report.FORMATS) do
         fmt .. ': all five sections are present')
 end
 
+------------------------------------------------------------------------ DAW
+-- GetAppVersion() appends the platform after a slash; only the version is kept.
+eq(report.daw('7.42/macOS-arm64'), 'REAPER 7.42', 'DAW: platform suffix dropped')
+eq(report.daw('7.43+dev1010/x64'), 'REAPER 7.43+dev1010', 'DAW: a dev build keeps its tag')
+eq(report.daw('7.42'), 'REAPER 7.42', 'DAW: no suffix to drop')
+eq(report.daw(nil), 'REAPER', 'DAW: no version at all still names the DAW')
+
+-- It heads the report as a section of its own, decorated like the others.
+local DAW = 'REAPER 7.42'
+eq(report.format(B, 'plaintext', DAW), 'DAW:\nREAPER 7.42\n\n' .. PLAIN,
+   'plain text: DAW section first')
+eq(report.format(B, 'bbcode', DAW), '[CODE]\nDAW:\nREAPER 7.42\n\n' .. PLAIN .. '[/CODE]',
+   'BBCode: DAW section inside the [CODE] tags')
+check(report.format(B, 'markdown', DAW):find('^%*%*DAW:%*%*\nREAPER 7%.42\n\n%*%*Instruments:%*%*') ~= nil,
+      'Markdown: DAW heading in bold, then the sections')
+check(report.format(B, 'bbplain', DAW):find('^%[b%]DAW:%[/b%]\nREAPER 7%.42\n\n%[b%]Instruments:%[/b%]') ~= nil,
+      'BB plain: DAW heading in bold, then the sections')
+
 --------------------------------------------------------------------- report
 io.write(('report: %d passed, %d failed\n'):format(pass, fail))
 for _, f in ipairs(failures) do io.write('  FAIL  ' .. f .. '\n') end

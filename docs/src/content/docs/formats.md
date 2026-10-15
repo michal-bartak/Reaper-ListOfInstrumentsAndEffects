@@ -3,12 +3,16 @@ title: Export formats
 description: What each Copy button puts on the clipboard.
 ---
 
-Every format lists the same five sections in the same order. An empty section
-prints `N/A`. The examples below are trimmed to the first two sections.
+Every format starts with the DAW and its version, then lists the same five
+sections in the same order. An empty section prints `N/A`. The examples below
+are trimmed to the first two sections.
 
 ## Plain Text
 
 ```
+DAW:
+REAPER 7.42
+
 Instruments:
 2x   VST3: Serum (Xfer Records)
 1x   VSTi: Vital (Vital Audio)
@@ -23,6 +27,9 @@ Each section is a table. The name column is as wide as the widest name in that
 section, so the counts line up.
 
 ```
+**DAW:**
+REAPER 7.42
+
 **Instruments:**
 |Plugin Name               |Instances |
 |--------------------------|---------:|
@@ -40,6 +47,9 @@ section, so the counts line up.
 Plain text with bold headings:
 
 ```
+[b]DAW:[/b]
+REAPER 7.42
+
 [b]Instruments:[/b]
 2x   VST3: Serum (Xfer Records)
 1x   VSTi: Vital (Vital Audio)
@@ -51,6 +61,9 @@ Plain text wrapped in `[CODE]` tags, which forces a fixed-width font on forums:
 
 ```
 [CODE]
+DAW:
+REAPER 7.42
+
 Instruments:
 2x   VST3: Serum (Xfer Records)
 1x   VSTi: Vital (Vital Audio)

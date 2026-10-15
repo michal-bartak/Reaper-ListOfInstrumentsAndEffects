@@ -3,9 +3,9 @@
 
   A trimmed port of lib/gui/theme.lua from the AutoColor repo, carrying the
   parts this window has a use for: the style push, the section heading, the
-  hand-drawn button and its circled-i variant, and the dimming that fades the
-  window behind the About dialog. The checkbox glyph and the tab and table
-  helpers stay there -- this window has no tabs and no tables.
+  hand-drawn button and its circled-i variant, the checkbox with its ghost tick,
+  and the dimming that fades the window behind the About dialog. The tab and
+  table helpers stay there -- this window has no tabs and no tables.
 
   What ReaImGui 0.10 can and cannot do here:
 
@@ -39,6 +39,13 @@ M.DIM_CONTENT    = 0.30   -- 0..1; opacity of the window's content while the
                           -- About dialog is open. Fades everything toward the
                           -- dark background, so bright elements lose the most --
                           -- which is what a veil over the top cannot do.
+M.CHECKBOX_SCALE = 0.62   -- x the normal control height; the tick box only.
+                          -- FLOORS at text height / frame height: ImGui builds
+                          -- the square from the line height plus FramePadding,
+                          -- and padding cannot go negative.
+M.GHOST_CHECK       = 0x000000  -- a faint tick drawn on UNticked checkboxes,
+M.GHOST_CHECK_ALPHA = 0.30      -- so the box reads as a checkbox either way
+M.CHECK_THICKNESS   = 0.15      -- x the box height
 M.GLYPH_NUDGE_Y  = -0.02  -- x the text height; lifts a glyph off the line box.
                           -- ImGui centres the text's LINE BOX, and the baked
                           -- font reserves more air above the capitals (room for
@@ -237,6 +244,78 @@ function M.section(label, divider)
 
   M.label(label)
   ImGui.Spacing(ctx)
+end
+
+--- The height ImGui actually lays a line of text out with. NOT GetFontSize(),
+--- which is only the size asked for -- the baked line height is larger, and
+--- GetFrameHeight() is built from it. Must be called inside a frame.
+local function text_height()
+  local _, h = ImGui.CalcTextSize(ctx, 'X')
+  return h
+end
+
+--- Draw a tick inside the given box. ImGui only draws one when the box is
+--- checked, so both states are drawn here instead: the real colour when on, a
+--- ghost when off.
+local function draw_tick(x0, y0, size, col)
+  local dl  = ImGui.GetWindowDrawList(ctx)
+  local t   = math.max(1, size * M.CHECK_THICKNESS)
+  local pad = size * 0.24
+  local ax, ay = x0 + pad,        y0 + size * 0.54
+  local bx, by = x0 + size * 0.42, y0 + size - pad
+  local cx, cy = x0 + size - pad,  y0 + pad
+  ImGui.DrawList_AddLine(dl, ax, ay, bx, by, col, t)
+  ImGui.DrawList_AddLine(dl, bx, by, cx, cy, col, t)
+end
+
+--- A checkbox with a smaller tick box than a full-height control, and a ghost
+--- tick when it is off. The box size comes from FramePadding, so that is what
+--- gets squeezed.
+---
+--- Unlike AutoColor's, this one always sits on the centre line of a
+--- full-height row: its only use is beside the Copy buttons, and ImGui lays a
+--- SameLine item out from the row's TOP, so the smaller box -- and its label,
+--- which ImGui places one padding below the box's top -- would ride high.
+--- The nudge down happens inside a group: SameLine takes its y from where the
+--- PREVIOUS item started, so a bare nudge would drag whatever follows on the
+--- row down with it. A group reports the row's top instead.
+--- @return changed, value
+function M.checkbox(label, value)
+  local full = ImGui.GetFrameHeight(ctx)
+  local th   = text_height()
+  -- ImGui's square is text height + 2 * padding.y. Solve for the padding
+  -- against the TEXT HEIGHT, not the font size, or `box` describes a square
+  -- that was never painted.
+  local pad  = math.max(0, (full * M.CHECKBOX_SCALE - th) * 0.5)
+  local box  = th + pad * 2
+
+  -- Take the theme's tick colour before hiding the built-in mark, so the "on"
+  -- state still matches REAPER's theme. live(), so both ticks fade with the
+  -- rest of the window behind the About dialog -- see live() above; the ghost
+  -- has no style entry to read, so it takes the style alpha by hand.
+  local markcol = live(ImGui.Col_CheckMark)
+  local galpha  = M.GHOST_CHECK_ALPHA * ImGui.GetStyleVar(ctx, ImGui.StyleVar_Alpha)
+  local ghost   = ((M.GHOST_CHECK & 0xFFFFFF) << 8) | math.floor(galpha * 255)
+
+  ImGui.PushStyleVar(ctx, ImGui.StyleVar_FramePadding, pad, pad)
+  ImGui.PushStyleColor(ctx, ImGui.Col_CheckMark, 0x00000000)   -- we draw it
+  ImGui.BeginGroup(ctx)
+  ImGui.SetCursorPosY(ctx, ImGui.GetCursorPosY(ctx) + (full - box) * 0.5)
+  local rv, v = ImGui.Checkbox(ctx, label, value)
+  ImGui.PopStyleColor(ctx)
+  ImGui.PopStyleVar(ctx)
+
+  -- The item rect spans box AND label, so its width is not the square -- but
+  -- its height is. Centre the tick in that rather than trusting `box`.
+  local x0, y0 = ImGui.GetItemRectMin(ctx)
+  local _,  y1 = ImGui.GetItemRectMax(ctx)
+  if x0 then
+    local off = ((y1 - y0) - box) * 0.5
+    draw_tick(x0 + off, y0 + off, box, v and markcol or ghost)
+  end
+  ImGui.EndGroup(ctx)
+
+  return rv, v
 end
 
 --- Move the cursor so an item of width w comes out centred.
