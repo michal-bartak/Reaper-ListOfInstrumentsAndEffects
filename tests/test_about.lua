@@ -17,7 +17,7 @@ local function check(ok, label, detail)
   end
 end
 
-local MANIFEST = REPO .. 'Various/MXM_List of Instruments and Effects.lua'
+local MANIFEST = REPO .. 'ReaPack/MXM_List of Instruments and Effects.lua'
 local f = assert(io.open(MANIFEST, 'r'), 'cannot read ' .. MANIFEST)
 local manifest = f:read('a')
 f:close()

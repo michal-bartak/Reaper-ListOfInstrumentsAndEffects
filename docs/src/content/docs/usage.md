@@ -18,7 +18,7 @@ Four buttons copy the report to the clipboard:
 | BB Plain | BBCode, with bold headings |
 | BB Code | Plain text wrapped in `[CODE]` tags |
 
-See [Export formats](/ListOfInstrumentsAndEffects/formats/) for more info about formats.
+See [Export formats](/Reaper-ListOfInstrumentsAndEffects/formats/) for more info about formats.
 
 ## Debug
 

@@ -2,11 +2,11 @@
 
 The user documentation, built with [Astro](https://astro.build/) +
 [Starlight](https://starlight.astro.build/) and published to GitHub Pages at
-<https://michal-bartak.github.io/ListOfInstrumentsAndEffects/>.
+<https://michal-bartak.github.io/Reaper-ListOfInstrumentsAndEffects/>.
 
 ```bash
 npm install
-npm run dev      # http://localhost:4321/ListOfInstrumentsAndEffects/
+npm run dev      # http://localhost:4321/Reaper-ListOfInstrumentsAndEffects/
 npm run build    # static site into dist/
 ```
 
@@ -16,7 +16,9 @@ npm run build    # static site into dist/
 astro.config.mjs       site config, the sidebar, and the lightbox script
 src/content/docs/      the pages, as Markdown
 src/styles/custom.css  accent colour, figures, the lightbox, the theme picker
-public/                favicons, rendered by `make icon` in the repo root
+src/components/        SocialIcons.astro: REAPER and KVR links beside GitHub
+public/                favicons, rendered by `make icon` in the repo root;
+                       reaper.png and kvr.png, the header link marks
 ```
 
 The theme is [starlight-theme-rapide](https://github.com/HiDeoo/starlight-theme-rapide),

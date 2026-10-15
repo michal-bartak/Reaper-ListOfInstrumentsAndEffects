@@ -1,0 +1,117 @@
+name: Release
+
+# Manual: run after the ReaPack index for the version is committed, tagged and pushed.
+# Builds the manual-install zip from the tag and publishes it as a GitHub release.
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag, e.g. v3.0.0 (must exist on GitHub and be v + the manifest @version)"
+        required: true
+      draft:
+        description: "Create as draft release"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.normalize.outputs.tag }}
+      version: ${{ steps.normalize.outputs.version }}
+      prerelease: ${{ steps.normalize.outputs.prerelease }}
+    steps:
+      # Tags carry a "v" prefix (v2.1.0, v3.0.0) -- .reapack-index.conf's URL template
+      # depends on it. One left off is put back.
+      - name: Normalize tag input
+        id: normalize
+        env:
+          RAW_TAG: ${{ inputs.tag }}
+        run: |
+          version="${RAW_TAG#v}"
+          echo "tag=v$version" >> "$GITHUB_OUTPUT"
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          # ReaPack treats any letter in a version as a pre-release.
+          if [[ "$version" =~ [A-Za-z] ]]; then echo "prerelease=true"; else echo "prerelease=false"; fi >> "$GITHUB_OUTPUT"
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ steps.normalize.outputs.tag }}
+      - name: Verify tag matches manifest @version
+        run: |
+          version="$(sed -n 's/^--[[:space:]]*@version[[:space:]]*//p' "ReaPack/MXM_List of Instruments and Effects.lua" | tr -d ' \r')"
+          if [ "${{ steps.normalize.outputs.version }}" != "$version" ]; then
+            echo "::error::Tag ${{ steps.normalize.outputs.tag }} does not match manifest @version $version"
+            exit 1
+          fi
+
+  test:
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.prepare.outputs.tag }}
+      # REAPER ships Lua 5.4, which run.sh prefers when it finds it.
+      - name: Install Lua 5.4
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends lua5.4
+      - run: ./tests/run.sh
+
+  release:
+    needs: [prepare, test]
+    runs-on: ubuntu-latest
+    steps:
+      # Tooling and CHANGELOG.md from the branch the workflow runs on; the files to
+      # ship from the tag. A past tag predates package.py and the changelog.
+      - uses: actions/checkout@v7
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ needs.prepare.outputs.tag }}
+          path: release-src
+
+      # Validates the tag's @provides block, then zips exactly those files.
+      - name: Build package
+        run: python3 .github/scripts/package.py --root release-src dist
+
+      - name: Extract changelog section
+        id: changelog
+        run: |
+          version="${{ needs.prepare.outputs.version }}"
+          notes="$(awk -v ver="$version" '
+            index($0, "## [" ver "]") == 1 { flag=1; next }
+            /^## \[/ && flag { flag=0 }
+            flag { print }
+          ' CHANGELOG.md)"
+          notes="$(printf '%s\n' "$notes" | sed -e '/./,$!d' | tac | sed -e '/./,$!d' | tac)"
+          if [ -z "$notes" ]; then
+            echo "::warning::No CHANGELOG.md section found for version $version"
+          fi
+          {
+            echo "notes<<__CHANGELOG_EOF__"
+            echo "$notes"
+            echo "__CHANGELOG_EOF__"
+          } >> "$GITHUB_OUTPUT"
+
+      # generate_release_notes is off: GitHub's generator would add little beyond a
+      # "Full Changelog" compare link. The CHANGELOG.md link points at main, to resolve
+      # for every tag and show releases made after this one.
+      - uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ${{ needs.prepare.outputs.tag }}
+          name: ${{ needs.prepare.outputs.version }}
+          draft: ${{ inputs.draft }}
+          prerelease: ${{ needs.prepare.outputs.prerelease }}
+          generate_release_notes: false
+          body: |
+            ## List of Instruments and Effects
+
+            ${{ steps.changelog.outputs.notes }}
+
+            📖 [CHANGELOG.md](https://github.com/michal-bartak/Reaper-ListOfInstrumentsAndEffects/blob/main/CHANGELOG.md) - all changes
+
+            📦 Installation: ReaPack or Manual, see [Installation guide](https://michal-bartak.github.io/Reaper-ListOfInstrumentsAndEffects/installation/)
+          files: dist/*.zip

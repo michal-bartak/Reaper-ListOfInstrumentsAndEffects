@@ -3,3 +3,6 @@
 
 # icon toolchain
 node_modules/
+
+# make package
+/dist/

@@ -3,11 +3,11 @@ import { defineConfig } from 'astro/config';
 import starlightThemeRapide from 'starlight-theme-rapide';
 
 // GitHub Pages: served at
-// https://michal-bartak.github.io/ListOfInstrumentsAndEffects/
+// https://michal-bartak.github.io/Reaper-ListOfInstrumentsAndEffects/
 // (base matches the repo name). Update both if the repo is renamed.
 export default defineConfig({
   site: 'https://michal-bartak.github.io',
-  base: '/ListOfInstrumentsAndEffects',
+  base: '/Reaper-ListOfInstrumentsAndEffects',
   integrations: [
     starlight({
       title: 'List of Instruments and Effects',
@@ -22,6 +22,9 @@ export default defineConfig({
       // src/styles/custom.css.
       components: {
         ThemeSelect: '@astrojs/starlight/components/ThemeSelect.astro',
+        // Adds REAPER and KVR links beside GitHub. `social` below only takes
+        // Starlight's own icon names, and neither is one of them.
+        SocialIcons: './src/components/SocialIcons.astro',
       },
       // Renames the table-of-contents' top entry from "Overview" to the page title.
       routeMiddleware: './src/starlightRouteData.ts',
@@ -31,13 +34,13 @@ export default defineConfig({
       // generated copy in public/, because Astro only serves that verbatim.
       favicon: '/favicon-32.png',
       logo: { src: '../icon/icon.svg', alt: '', replacesTitle: false },
-      social: { github: 'https://github.com/michal-bartak/ListOfInstrumentsAndEffects' },
+      social: { github: 'https://github.com/michal-bartak/Reaper-ListOfInstrumentsAndEffects' },
       head: [
         // `favicon` above emits its own <link> and prefixes the base path. These
-        // do not, hence the literal /ListOfInstrumentsAndEffects.
-        { tag: 'link', attrs: { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/ListOfInstrumentsAndEffects/favicon-16.png' } },
-        { tag: 'link', attrs: { rel: 'icon', type: 'image/png', sizes: '48x48', href: '/ListOfInstrumentsAndEffects/favicon-48.png' } },
-        { tag: 'link', attrs: { rel: 'icon', type: 'image/svg+xml', href: '/ListOfInstrumentsAndEffects/favicon.svg' } },
+        // do not, hence the literal /Reaper-ListOfInstrumentsAndEffects.
+        { tag: 'link', attrs: { rel: 'icon', type: 'image/png', sizes: '16x16', href: '/Reaper-ListOfInstrumentsAndEffects/favicon-16.png' } },
+        { tag: 'link', attrs: { rel: 'icon', type: 'image/png', sizes: '48x48', href: '/Reaper-ListOfInstrumentsAndEffects/favicon-48.png' } },
+        { tag: 'link', attrs: { rel: 'icon', type: 'image/svg+xml', href: '/Reaper-ListOfInstrumentsAndEffects/favicon.svg' } },
         // Click a screenshot in the docs body to view it full-size in a lightbox.
         // Runs on first load and after every Starlight client-side navigation.
         {

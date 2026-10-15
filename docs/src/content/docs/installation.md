@@ -26,7 +26,7 @@ Search for `mxm` to find either of them quickly.
 
 ## The toolbar icon
 
-<img src="/ListOfInstrumentsAndEffects/toolbar-list-of-instruments-and-effects.svg" width="72" alt="The toolbar icon" />
+<img src="/Reaper-ListOfInstrumentsAndEffects/toolbar-list-of-instruments-and-effects.svg" width="72" alt="The toolbar icon" />
 
 ReaPack installs the icon into `Data/toolbar_icons/` at three sizes -- 1x, 150%
 and 200% -- so REAPER picks the one your display needs.
@@ -43,11 +43,15 @@ and 200% -- so REAPER picks the one your display needs.
    | Windows | `%AppData%\REAPER\` |
    | Linux | `~/.config/REAPER/` |
 
-1. Copy the **contents** of `Reaper/` over it, merging with what is already there:
+1. Download `MXM_ListOfInstrumentsAndEffects-<version>.zip` from the
+   [GitHub releases page](https://github.com/michal-bartak/Reaper-ListOfInstrumentsAndEffects/releases).
+
+1. Unpack it into the resource path. The zip holds a `Scripts/` folder and a `Data/` folder; merge
+   them with the ones already there, do not replace them:
 
    ```
-   Reaper/Scripts/MXM_ListOfInstrumentsAndEffects/  ->  <resource path>/Scripts/MXM_ListOfInstrumentsAndEffects/
-   Reaper/Data/toolbar_icons/         ->  <resource path>/Data/toolbar_icons/
+   Scripts/MXM_ListOfInstrumentsAndEffects/  ->  <resource path>/Scripts/MXM_ListOfInstrumentsAndEffects/
+   Data/toolbar_icons/                       ->  <resource path>/Data/toolbar_icons/
    ```
 
 In REAPER:

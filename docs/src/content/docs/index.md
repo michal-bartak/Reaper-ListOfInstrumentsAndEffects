@@ -14,7 +14,7 @@ report to the clipboard in different formats.
 
 The report covers every FX chain REAPER has: tracks, track input FX, the master
 track, the monitoring chain, and the FX on media items' takes. See
-[What gets counted](/ListOfInstrumentsAndEffects/counting/).
+[What gets counted](/Reaper-ListOfInstrumentsAndEffects/counting/).
 
 ## Licence
 

@@ -6,7 +6,7 @@ description: Common problems and what to do.
 ## "needs ReaImGui, which is not installed"
 
 Install ReaImGui through ReaPack, then restart REAPER. See
-[Installation](/ListOfInstrumentsAndEffects/installation/).
+[Installation](/Reaper-ListOfInstrumentsAndEffects/installation/).
 
 ## "ReaImGui 0.10 or newer is required"
 

@@ -1,13 +1,13 @@
-.PHONY: help test icon docs docs-install docs-dev docs-build docs-preview docs-clean
+.PHONY: help test package package-check icon docs docs-install docs-dev docs-build docs-preview docs-clean
 
 # The script itself needs no build step -- REAPER runs the .lua files where they sit. This file is
-# for the parts that do have a toolchain: the test suite, the icon, and the docs site.
+# for the parts that do have a toolchain: the test suite, the release zip, the icon, and the docs site.
 
 # Defined up here because the icon target needs it too, and Make expands a prerequisite the moment
 # it reads the rule -- a definition further down would expand to nothing.
 DOCS_DIR := docs
 # Matches `base` in docs/astro.config.mjs; astro preview serves the site under it.
-DOCS_URL := http://localhost:4321/ListOfInstrumentsAndEffects/
+DOCS_URL := http://localhost:4321/Reaper-ListOfInstrumentsAndEffects/
 
 help:
 	@echo "Docs (Astro + Starlight, in docs/):"
@@ -21,9 +21,21 @@ help:
 	@echo ""
 	@echo "Tests (need a standalone Lua: brew install lua):"
 	@echo "  make test               run the suite outside REAPER"
+	@echo ""
+	@echo "Release:"
+	@echo "  make package-check      validate the files the manifest provides"
+	@echo "  make package            that, then zip them into dist/ for a manual install"
 
 test:
 	./tests/run.sh
+
+# The zip the Release workflow attaches to a GitHub release. The file list is the manifest's
+# @provides block, so the zip holds exactly what ReaPack installs.
+package-check:
+	@python3 .github/scripts/package.py --check
+
+package:
+	@python3 .github/scripts/package.py dist
 
 # Re-render the favicons, the README mark and the REAPER toolbar strips from the one master SVG.
 # Deliberately NOT a prerequisite of docs-build: the outputs are committed and the master changes
