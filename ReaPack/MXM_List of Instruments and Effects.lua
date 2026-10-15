@@ -53,7 +53,9 @@
 --   Requires **ReaImGui 0.10 or newer**, available on ReaPack. Nothing else --
 --   neither Lokasenna's GUI library nor SWS is needed any more.
 --
---   Written and tested in REAPER 7.x; it may work in earlier versions. GPL v3.
+--   Written and tested in REAPER 7.x; It may work in earlier versions.
+--   Licence: GPL v3.
+-- 
 -- @changelog
 --   - Requires ReaImGui 0.10 or later.
 --   - Added: FX on media items; those on inactive takes are listed as offline/inactive.
