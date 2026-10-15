@@ -1,0 +1,54 @@
+---
+// Starlight's header social links, plus REAPER itself and the KVR forum the
+// One Synth Challenge runs in.
+//
+// An override is the only way in: the `social` config accepts Starlight's own
+// icon set by name, and neither REAPER nor KVR is in it. starlight-theme-rapide
+// overrides Pagination, Banner, PageTitle, ThemeSelect and LanguageSelect, but
+// not this one, so nothing here conflicts with the theme.
+//
+// Both marks are the projects' own logos, unmodified apart from KVR's being
+// trimmed to its edges and scaled down.
+import Default from '@astrojs/starlight/components/SocialIcons.astro';
+
+// public/ is served verbatim under the site's base path, which this prefixes
+// for us -- so a rename of the repository does not break the src.
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Default><slot /></Default>
+
+<a href="https://www.reaper.fm/" class="sl-flex">
+  <span class="sr-only">REAPER</span>
+  <img src={`${base}/reaper.png`} alt="" width="24" height="24" />
+</a>
+
+<!-- Every One Synth Challenge round is a thread in KVR's Instruments forum;
+     there is no subforum of its own, and a round's thread is stale in a month. -->
+<a href="https://www.kvraudio.com/forum/viewforum.php?f=1" class="sl-flex">
+  <span class="sr-only">KVR Audio forum</span>
+  <img class="wide" src={`${base}/kvr.png`} alt="" width="57" height="24" />
+</a>
+
+<style>
+  /* Same box as Starlight's own social links, so the row stays even. */
+  a {
+    color: var(--sl-color-text-accent);
+    padding: 0.5em;
+    margin: -0.5em;
+  }
+  a:hover {
+    opacity: 0.66;
+  }
+  /* 1em, the way Starlight sizes its SVG icons -- so this tracks their size
+     instead of pinning a number that would drift away from them. */
+  img {
+    width: 1em;
+    height: 1em;
+    display: block;
+  }
+  /* KVR's mark is a wordmark, about 2.4:1; keep the height, let width follow. */
+  img.wide {
+    width: auto;
+  }
+</style>

@@ -105,6 +105,14 @@ header.header .right-group {
   gap: 1rem !important;
 }
 
+/* Social icons at 1.5rem rather than Starlight's 1rem, which reads as small beside the search box
+   and the theme select. Set on the anchor, not the glyph: Starlight sizes its SVGs at 1em of the
+   anchor, and the REAPER and KVR <img>s in src/components/SocialIcons.astro do the same, so one
+   rule moves them all and they cannot drift apart. */
+header.header .social-icons a {
+  font-size: 1.5rem;
+}
+
 @media (min-width: 50rem) {
   header.header:not(:has(starlight-lang-select)),
   [data-has-sidebar] header.header:not(:has(starlight-lang-select)) {
