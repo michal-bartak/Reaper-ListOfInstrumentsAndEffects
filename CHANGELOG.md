@@ -10,7 +10,7 @@ suffix (`3.1.0beta1`) marks a pre-release.
 > The ReaPack changelog lives separately, in the `@changelog` block of
 > [`ReaPack/MXM_List of Instruments and Effects.lua`](ReaPack/MXM_List%20of%20Instruments%20and%20Effects.lua).
 
-## [Unreleased]
+## [3.0.0beta1] - 2026-10-15
 
 ### Added
 

@@ -1,9 +1,10 @@
 -- @description List of Instruments and Effects
 -- @author Michal MaXyM Bartak
--- @version 3.0.0
+-- @version 3.0.0beta1
 -- @metapackage true
--- @link GitHub https://github.com/michal-bartak/Reaper-ListOfInstrumentsAndEffects
--- @link Documentation https://michal-bartak.github.io/Reaper-ListOfInstrumentsAndEffects/
+-- @links
+--   GitHub https://github.com/michal-bartak/Reaper-ListOfInstrumentsAndEffects
+--   Documentation https://michal-bartak.github.io/Reaper-ListOfInstrumentsAndEffects/
 -- @screenshot https://raw.githubusercontent.com/michal-bartak/Reaper-ListOfInstrumentsAndEffects/main/docs/src/assets/window.png
 -- @provides
 --   [main] /Reaper/Scripts/MXM_ListOfInstrumentsAndEffects/MXM_List of Instruments and Effects.lua > ../MXM_ListOfInstrumentsAndEffects/

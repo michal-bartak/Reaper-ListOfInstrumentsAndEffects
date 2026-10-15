@@ -9,7 +9,7 @@
 
 return {
   NAME    = 'List of Instruments and Effects',
-  VERSION = '3.0.0',
+  VERSION = '3.0.0beta1',
   AUTHOR  = 'Michal MaXyM Bartak',
   LICENCE = 'GPL v3',
   COPYRIGHT = 'Copyright (c) 2026 Michal Bartak',
