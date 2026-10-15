@@ -1,6 +1,6 @@
 -- @description List of Instruments and Effects
 -- @author Michal MaXyM Bartak
--- @version 3.0.0beta1
+-- @version 3.0.0
 -- @metapackage true
 -- @links
 --   GitHub https://github.com/michal-bartak/Reaper-ListOfInstrumentsAndEffects
