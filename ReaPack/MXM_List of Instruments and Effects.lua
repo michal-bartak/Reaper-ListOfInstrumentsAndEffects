@@ -1,0 +1,75 @@
+-- @description List of Instruments and Effects
+-- @author Michal MaXyM Bartak
+-- @version 3.0.0beta1
+-- @metapackage true
+-- @links
+--   GitHub https://github.com/michal-bartak/Reaper-ListOfInstrumentsAndEffects
+--   Documentation https://michal-bartak.github.io/Reaper-ListOfInstrumentsAndEffects/
+-- @screenshot https://raw.githubusercontent.com/michal-bartak/Reaper-ListOfInstrumentsAndEffects/main/docs/src/assets/window.png
+-- @provides
+--   [main] /Reaper/Scripts/MXM_ListOfInstrumentsAndEffects/MXM_List of Instruments and Effects.lua > ../MXM_ListOfInstrumentsAndEffects/
+--   [nomain] /Reaper/Scripts/MXM_ListOfInstrumentsAndEffects/lib/*.lua > ../MXM_ListOfInstrumentsAndEffects/lib/
+--   [data] /Reaper/Data/toolbar_icons/*.png > toolbar_icons/
+--   [data] /Reaper/Data/toolbar_icons/150/*.png > toolbar_icons/150/
+--   [data] /Reaper/Data/toolbar_icons/200/*.png > toolbar_icons/200/
+-- @about
+--   # List of Instruments and Effects
+--
+--   Created in response to the KVR One Synth Challenge
+--   competition, which requires providing technical details of the production.
+--
+--   It lists and counts all REAPER plugins used in an active project, grouping them into
+--   categories:
+--
+--   - Instruments,
+--   - Effects,
+--   - Input FX,
+--   - Monitoring,
+--   - Offline/Inactive
+--
+--   The script collects plugins from:
+--
+--   - track inputs and inserts
+--   - master and monitoring
+--   - media item/takes
+--   - FX containers (nested included)
+--
+--   Results are presented in the window allowing to copy them to clipboard in several formats:
+--
+--   - **plain text** -- just a plain text
+--   - **markdown** -- results formatted into Markdown tables
+--   - **BB plain** -- uses BBCode formatting, such as bold
+--   - **BB code** -- wrapped in `[CODE]` tags to force a fixed-width font
+--
+--   The report is built when the window opens, and rebuilt whenever you press a
+--   Copy button or toggle `debug`. Each rebuild reads the project you are
+--   looking at now, so it picks up a switch to another project tab. Normally
+--   the window shows plain text whichever export format you copy; tick `debug`
+--   to make it show exactly what goes to the clipboard.
+--
+--   The ⓘ button shows the version, the licence and a link to the
+--   documentation.
+--
+--   Requires **ReaImGui 0.10 or newer**, available on ReaPack. Nothing else --
+--   neither Lokasenna's GUI library nor SWS is needed any more.
+--
+--   Written and tested in REAPER 7.x; It may work in earlier versions.
+--   Licence: GPL v3.
+-- 
+-- @changelog
+--   - Requires ReaImGui 0.10 or later.
+--   - Added: FX on media items; those on inactive takes are listed as offline/inactive.
+--   - Added: Input FX section, with record input FX on every track.
+--   - Added: FX inside containers, followed to any depth (REAPER 7.06 or later).
+--   - Added: About dialog (the ⓘ button).
+--   - Added: the report opens with the REAPER version.
+--   - Changed: window rebuilt on ReaImGui; sharp on HiDPI displays, and resizable.
+--   - Fixed: Markdown tables line up with a long heading and with accented names.
+--   - Fixed: the report follows the project tab you are looking at.
+
+-- This file is the ReaPack manifest and nothing else. reapack-index takes the
+-- category from the directory it sits in, so this repository's own index lists
+-- it under "ReaPack"; merge-index.py in the ReaPack repository renames that to
+-- the real category, Various, in the combined index users import. The
+-- @provides lines retarget with ../ so no category is part of the install path.
+-- The script itself is Reaper/Scripts/MXM_ListOfInstrumentsAndEffects/.

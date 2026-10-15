@@ -1,0 +1,14 @@
+{
+  "name": "list-of-instruments-and-effects-docs",
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.32.0",
+    "astro": "^5.0.0",
+    "starlight-theme-rapide": "^0.4.0"
+  }
+}

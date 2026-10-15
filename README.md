@@ -2,18 +2,48 @@
 This is a Lua script, which lists all Reaper plugins used in an active project, grouping them into categories.
 The motivation comes from KVR OSC (KVRaudio One Synth Challange) competition, which requires providing technical details of the production.
 
-![Screenshot](images/List_of_Instruments_and_Effects.png)
+Documentation: <https://michal-bartak.github.io/Reaper-ListOfInstrumentsAndEffects/>
+
+![Screenshot](docs/src/assets/window.png)
 
 When running the script, it immediately shows results in the opened window.
-Further, it provides a few buttons allowing copying the result to the clipboard. 
+Further, it provides a few buttons allowing copying the result to the clipboard.
 Currently available options are:
 * plain text - it's the text shown in the preview window
 * markdown - results are formatted into tables using markdown syntax
 * BB plain - results use some BBcode formatting, like bold
 * BB [code] - results are enclosed into `[CODE] [/CODE]` BBcode tags, to force fixed-width fonts
 
-Note, that every press of Copy to clipboard button generates the report again, including a refresh of displayed content
+The ⓘ button shows the version, the licence and links to the documentation and the source.
+
+The report is built when the window opens, and rebuilt when you press a Copy button or toggle `debug`. Each rebuild reads the project you are looking at now, so it picks up a switch to another project tab.
 Normally the report shown in the script window is plain text, regardless format selected by pressing the export button. With the `debug` checkbox checked, the report shown in the window will be the same as the content copied into the clipboard.
+
+## What gets counted
+
+Every FX chain REAPER offers, in five sections:
+
+| Section | Where the plugins come from |
+| --- | --- |
+| Instruments | Instruments on track FX chains, on the master, and on the active take of a media item |
+| Effects | Everything else on those same chains |
+| Input FX | Each track's record-input FX chain |
+| Monitoring plugins | The master track's input chain |
+| Offline/inactive plugins | Anything bypassed or offline, anything inside a bypassed or offline container, plus every FX on a take that is not the one playing back |
+
+Takes matter because REAPER lets a media item carry its own FX chain, instruments included --
+that is how a MIDI item makes sound without an instrument on its track.
+
+Containers are followed to any depth: what a container holds is counted, the container itself
+is not. Bypassing one, or taking it offline, marks everything inside it inactive. An offline
+container's contents are read out of the project state, because REAPER unloads them and will
+not report them otherwise -- the one gap being an offline container on a media item's take.
+Reading inside containers needs REAPER 7.06 or newer.
+
+## Requirements
+
+**ReaImGui 0.10 or newer**, installed through ReaPack (*Extensions → ReaPack → Browse packages*, search `ReaImGui`).
+Nothing else: neither Lokasenna's GUI library nor SWS is needed.
 
 # ReaPack
 
@@ -35,17 +65,50 @@ input to that combined index rather than something to import directly.
 ```
 Reaper/                     mirrors REAPER's resource path; this is what gets installed
   Scripts/MXM_ListOfInstrumentsAndEffects/
-    MXM_List of Instruments and Effects.lua
+    MXM_List of Instruments and Effects.lua    the window: ReaImGui only
+    lib/scan.lua                               walks the project's FX chains
+    lib/report.lua                             renders the four export formats
+    lib/theme.lua                              corners, padding, colours
+    lib/about.lua                              name, version, links, licence
+    lib/chunk.lua                              reads offline containers out of the
+                                               project state
   Data/toolbar_icons/       the toolbar icon, at 1x, 150 and 200
-Various/                    the ReaPack manifest, and nothing else; the directory
-                            name is the ReaPack category the package is listed
-                            under -- the manifest retargets every file with ../
-                            so the category is not part of the install path
+ReaPack/                    the ReaPack manifest, and nothing else; the category
+                            (Various) is set in the combined index, not here --
+                            see the ReaPack repository's merge-index.py
+tests/                      headless suites for lib/, run with plain lua
+docs/                       the documentation site (Astro + Starlight); src/assets/
+                            holds the screenshot
+Makefile                    tests, release zip, icon and docs targets
 icon/                       icon.svg, the master every icon output is rendered from
-images/                     the screenshot the package metadata links to
+images/                     a frozen copy of the screenshot, kept only so the URL in the
+                            already-published index keeps resolving
 index.xml                   generated by reapack-index; never edit by hand
+CHANGELOG.md                release notes; the GitHub release body comes from here
+.github/scripts/package.py  validates the manifest and builds the manual-install zip
 ```
 
 Installed, that is `Scripts/MXM Scripts/MXM_ListOfInstrumentsAndEffects/` under
 REAPER's resource path.
 
+## Tests
+
+`lib/scan.lua` and `lib/report.lua` touch neither REAPER nor ReaImGui, so they
+run anywhere:
+
+```
+make test
+```
+
+`make` on its own lists every target: tests, the icon, and the docs site.
+
+`tests/mockreaper.lua` stands in for the ReaScript API, so the suites cover the
+whole classification -- track, input, master, monitoring and take FX, active
+versus inactive takes, bypassed and offline plugins, and containers at every
+depth -- plus all four export formats. `tests/test_chunk.lua` runs the state
+chunk parser against real REAPER output. REAPER ships Lua 5.4; `run.sh` prefers it when several are installed
+and honours `LUA=/path/to/lua`.
+
+## Licence
+
+GPL v3 -- see [LICENSE](LICENSE). Copyright (c) 2026 Michal Bartak.

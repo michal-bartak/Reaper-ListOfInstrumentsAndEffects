@@ -1,0 +1,135 @@
+/* Ported from the AutoColor docs, so both sites read as one. Anything specific to that
+   project's content -- the generated colouring diagrams, the inline rule swatches, the
+   toolbar-icon glyph -- is left there. */
+
+/* Brand accent.
+
+   --sl-color-accent is the flat brand blue, used for borders and fills, where
+   contrast ratios do not apply. --sl-color-accent-high is the TEXT variant, and
+   it has to move in OPPOSITE directions per theme -- lighter on the dark
+   background, darker on the light one. Pinning it to the flat blue measured
+   4.31:1 on dark and 4.14:1 on light for the two things drawn in it, the
+   sidebar's current-page link and the site title: both under WCAG AA's 4.5 for
+   normal text. Same hue, lightness moved, measured against the rendered page:
+   6.12:1 and 6.01:1.
+
+   --sl-color-text-accent is set alongside it because Starlight maps that to
+   accent-high in one theme and to accent in the other; pinning it directly is
+   what makes both themes actually move.
+
+   !important throughout because Starlight appends plugin CSS AFTER user
+   customCss, so rapide's stylesheet loads after this file and equal specificity
+   loses on order. */
+:root {
+  --sl-color-accent: #3a73e8 !important;
+  --sl-color-accent-high: #6491ed !important;   /* hsl(220 79% 66%) on #121111 */
+  --sl-color-text-accent: #6491ed !important;
+}
+
+:root[data-theme='light'] {
+  --sl-color-accent-high: #1956d2 !important;   /* hsl(220 79% 46%) on #faf8f8 */
+  --sl-color-text-accent: #1956d2 !important;
+}
+
+/* Click a screenshot in the docs body to view it full-size in a lightbox. */
+.sl-markdown-content img {
+  cursor: zoom-in;
+  border-radius: 6px;
+}
+
+/* A screenshot illustrates the page; it is not the page's subject, and at full
+   column width it read as though it were. Half that, with the lightbox there
+   for anyone who wants to read the text in it.
+
+   Scoped to `p > img`, which is what a Markdown image produces. The toolbar
+   icon in installation.md is raw HTML at a fixed 72px and sits outside any
+   paragraph, so it is left alone. */
+.sl-markdown-content p > img {
+  width: 50%;
+  min-width: min(16rem, 100%);
+  max-width: 100%;
+  height: auto;
+}
+
+.shot {
+  margin: 1.5rem 0;
+}
+
+.shot figcaption {
+  margin-top: 0.5rem;
+  font-size: var(--sl-text-sm);
+  color: var(--sl-color-gray-2);
+  text-align: center;
+}
+
+.img-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: rgba(0, 0, 0, 0.85);
+  cursor: zoom-out;
+}
+
+.img-lightbox.open {
+  display: flex;
+}
+
+.img-lightbox img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 6px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Theme picker (Starlight's own Dark/Light/Auto <select>, which astro.config.mjs restores in
+   place of starlight-theme-rapide's two-state icon button).
+
+   The <select> keeps stock Starlight geometry -- the only things touched here are the space
+   around it and the focus ring. Both fixes exist because rapide's header spacing was tuned for
+   ITS icon button, which carried `margin-inline: 0.5rem`, whereas Starlight's select carries the
+   opposite: `margin-inline: -0.5rem`, i.e. its painted box overflows 8px past the element on each
+   side. So where rapide removed spacing expecting the button to supply it, the select instead eats
+   8px more.
+
+   Both selectors copy rapide's own, and `!important` is what makes them win: Starlight appends
+   plugin CSS AFTER user customCss, so rapide's stylesheet loads after this file and equal
+   specificity loses on order. Same reason as the accent overrides at the top of this file. */
+header.header .right-group {
+  gap: 1rem !important;
+}
+
+/* Social icons at 1.5rem rather than Starlight's 1rem, which reads as small beside the search box
+   and the theme select. Set on the anchor, not the glyph: Starlight sizes its SVGs at 1em of the
+   anchor, and the REAPER and KVR <img>s in src/components/SocialIcons.astro do the same, so one
+   rule moves them all and they cannot drift apart. */
+header.header .social-icons a {
+  font-size: 1.5rem;
+}
+
+@media (min-width: 50rem) {
+  header.header:not(:has(starlight-lang-select)),
+  [data-has-sidebar] header.header:not(:has(starlight-lang-select)) {
+    padding-inline-end: var(--sl-nav-pad-x) !important;
+  }
+}
+
+/* A ring of our own rather than none at all. Starlight's default sits tight
+   against a control whose painted box already overflows its element by 8px a
+   side, so it read as a smear; removing it outright left keyboard users with
+   nothing but the label colour below, which is not enough on its own. */
+starlight-theme-select select:focus-visible {
+  outline: 2px solid var(--sl-color-text-accent);
+  outline-offset: 3px;
+  border-radius: 0.25rem;
+}
+
+starlight-theme-select label:is(:hover, :focus-within) {
+  color: var(--sl-color-accent-high);
+}

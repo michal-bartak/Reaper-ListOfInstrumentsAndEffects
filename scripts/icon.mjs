@@ -4,9 +4,8 @@
 // toolbar icons are three tinted copies composited side by side. Edit the SVG, run
 // `npm install && npm run icon`, commit what changes.
 //
-// This mirrors docs/scripts/icon.mjs in the AutoColor repo, minus the favicon and docs-logo
-// outputs, which this repo has no site to serve. If a third script ever needs the same thing,
-// lift it somewhere shared rather than copying it again.
+// This mirrors docs/scripts/icon.mjs in the AutoColor repo. If a third script ever needs the same
+// thing, lift it somewhere shared rather than copying it again.
 
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
@@ -47,6 +46,10 @@ const TOOLBAR_MARGIN = 3.5 / 30;
 const TOOLBAR_DIR = join(REPO, 'Reaper', 'Data', 'toolbar_icons');
 const TOOLBAR_NAME = 'mxm_toolbar_list_of_instruments_and_effects.png';
 
+// public/ is the only directory Astro serves verbatim. The docs logo is not rendered here: the
+// site points straight at the master, which Astro bundles from outside its own project.
+const DOCS_PUBLIC = join(REPO, 'docs', 'public');
+
 /** Map every stroke and fill colour in the SVG through `fn`. */
 function recolour(svg, fn) {
   return svg.replace(
@@ -77,13 +80,31 @@ async function write(path, buffer) {
 const master = await readFile(MASTER, 'utf8');
 console.log('Rendering from ' + MASTER.replace(REPO + '/', ''));
 
-// 1. The README mark. A PNG, not the SVG: GitHub's markdown sanitiser is fussier about SVG.
+// 1. Favicons. Chrome has taken SVG favicons since 80 and this one renders correctly on its own,
+//    but an SVG favicon is still the least reliable thing on the page -- browsers cache favicons
+//    hard and pick between candidates by their own rules. So PNGs are offered alongside it and
+//    astro.config.mjs points `favicon` at the 32px one.
+await write(join(DOCS_PUBLIC, 'favicon.svg'), Buffer.from(master));
+for (const size of [16, 32, 48]) {
+  await write(
+    join(DOCS_PUBLIC, `favicon-${size}.png`),
+    await sharp(Buffer.from(master)).resize(size, size).png().toBuffer(),
+  );
+}
+
+// 1b. The mark as a flat SVG, for the docs to show beside the toolbar section. A copy of the
+//     master rather than new art, so `make icon` keeps the two in step and there is still only
+//     one hand-drawn file. public/ again: it is referenced by <img src> at a fixed size, not
+//     through Astro's image pipeline.
+await write(join(DOCS_PUBLIC, 'toolbar-list-of-instruments-and-effects.svg'), Buffer.from(master));
+
+// 2. The README mark. A PNG, not the SVG: GitHub's markdown sanitiser is fussier about SVG.
 await write(
   join(REPO, 'icon', 'instruments-effects-128.png'),
   await sharp(Buffer.from(master)).resize(128, 128).png().toBuffer(),
 );
 
-// 2. The REAPER toolbar strips, at every resolution.
+// 3. The REAPER toolbar strips, at every resolution.
 for (const { dir, cell } of TOOLBAR_CELLS) {
   const margin = Math.round(cell * TOOLBAR_MARGIN);
   const box = cell - margin * 2;
